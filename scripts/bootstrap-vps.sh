@@ -18,6 +18,15 @@ for pasta in data logs secrets backups; do
 done
 chmod 700 secrets
 
+# O Airflow não deve rodar como root no container. Se o bootstrap roda como root,
+# usa o UID padrão da imagem (50000) e dá a ele as pastas que o container escreve/lê.
+if [[ "$(id -u)" -eq 0 ]]; then
+  airflow_uid=50000
+  chown -R "${airflow_uid}:0" data logs secrets
+else
+  airflow_uid="$(id -u)"
+fi
+
 if [[ -f .env ]]; then
   log ".env já existe, mantendo."
 else
@@ -27,7 +36,7 @@ else
   sed -i \
     -e "s/^POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=${senha_pg}/" \
     -e "s/^AIRFLOW_JWT_SECRET=.*/AIRFLOW_JWT_SECRET=${jwt}/" \
-    -e "s/^AIRFLOW_UID=.*/AIRFLOW_UID=$(id -u)/" \
+    -e "s/^AIRFLOW_UID=.*/AIRFLOW_UID=${airflow_uid}/" \
     .env
   chmod 600 .env
   log ".env criado com senhas aleatórias. Edite GCP_PROJECT_ID antes de subir."
