@@ -1,0 +1,25 @@
+version: 2
+
+sources:
+  - name: bronze
+    description: Dados brutos do SGS (Banco Central), carregados pelo Airflow.
+    database: "{{ env_var('GCP_PROJECT_ID') }}"
+    schema: bronze
+    tables:
+      - name: sgs_observacoes
+        description: Uma linha por série e data, valor ainda como texto.
+        config:
+          loaded_at_field: ingerido_em
+          freshness:
+            warn_after: {count: 26, period: hour}
+            error_after: {count: 50, period: hour}
+        columns:
+          - name: serie_id
+            data_tests:
+              - not_null
+          - name: data_referencia
+            data_tests:
+              - not_null
+          - name: ingerido_em
+            data_tests:
+              - not_null

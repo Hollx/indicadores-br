@@ -1,0 +1,99 @@
+# Airflow 3 com LocalExecutor: um Postgres de metadados, api-server, scheduler e dag-processor.
+# Dimensionado para uma VPS de 4 vCPU / 8 GB dividida com outros serviços.
+
+x-airflow-common: &airflow-common
+  build:
+    context: ./airflow
+  image: indicadores-br-airflow:local
+  user: "${AIRFLOW_UID:-50000}:0"
+  restart: unless-stopped
+  environment:
+    AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:${POSTGRES_PASSWORD}@postgres/airflow
+    AIRFLOW__CORE__EXECUTION_API_SERVER_URL: http://airflow-apiserver:8080/execution/
+    AIRFLOW__API_AUTH__JWT_SECRET: ${AIRFLOW_JWT_SECRET}
+    AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+    AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "true"
+    AIRFLOW__CORE__PARALLELISM: "4"
+    # A porta só é publicada em 127.0.0.1 (acesso por túnel SSH); ver README antes de expor.
+    AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_ALL_ADMINS: "true"
+    GCP_PROJECT_ID: ${GCP_PROJECT_ID}
+    BQ_LOCATION: ${BQ_LOCATION:-US}
+    SGS_ANOS_HISTORICO: ${SGS_ANOS_HISTORICO:-5}
+    GOOGLE_APPLICATION_CREDENTIALS: /opt/airflow/secrets/sa.json
+    DBT_PROJECT_DIR: /opt/airflow/dbt
+    DBT_PROFILES_DIR: /opt/airflow/dbt
+    DADOS_DIR: /opt/airflow/data
+    PYTHONPATH: /opt/airflow
+  volumes:
+    - ./airflow/dags:/opt/airflow/dags
+    - ./airflow/include:/opt/airflow/include
+    - ./dbt:/opt/airflow/dbt
+    - ./data:/opt/airflow/data
+    - ./logs:/opt/airflow/logs
+    - ./secrets:/opt/airflow/secrets:ro
+
+services:
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: airflow
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 10s
+      retries: 5
+    mem_limit: 512m
+
+  airflow-init:
+    <<: *airflow-common
+    restart: "no"
+    entrypoint: /bin/bash
+    command: -c "airflow db migrate"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  airflow-apiserver:
+    <<: *airflow-common
+    command: api-server
+    ports:
+      - "127.0.0.1:8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/api/v2/version"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    mem_limit: 1g
+    depends_on:
+      postgres:
+        condition: service_healthy
+      airflow-init:
+        condition: service_completed_successfully
+
+  airflow-scheduler:
+    <<: *airflow-common
+    command: scheduler
+    mem_limit: 1536m
+    depends_on:
+      postgres:
+        condition: service_healthy
+      airflow-init:
+        condition: service_completed_successfully
+
+  airflow-dag-processor:
+    <<: *airflow-common
+    command: dag-processor
+    mem_limit: 768m
+    depends_on:
+      postgres:
+        condition: service_healthy
+      airflow-init:
+        condition: service_completed_successfully
+
+volumes:
+  pgdata:

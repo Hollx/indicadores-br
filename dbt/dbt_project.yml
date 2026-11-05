@@ -1,0 +1,29 @@
+name: indicadores_br
+version: "1.0.0"
+config-version: 2
+profile: indicadores_br
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+
+clean-targets: ["target", "dbt_packages"]
+
+# BigQuery sandbox: sem DML, então nada de modelos incrementais.
+# Silver em views (custo zero de armazenamento), Gold em tabelas reconstruídas a cada execução.
+models:
+  indicadores_br:
+    silver:
+      +schema: silver
+      +materialized: view
+    gold:
+      +schema: gold
+      +materialized: table
+
+seeds:
+  indicadores_br:
+    +schema: silver
+    series_sgs:
+      +column_types:
+        serie_id: int64

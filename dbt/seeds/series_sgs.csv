@@ -1,0 +1,5 @@
+serie_id,nome_serie,descricao,unidade,periodicidade
+432,selic_meta,Meta da taxa Selic definida pelo Copom,% a.a.,diaria
+433,ipca_mensal,IPCA - variação mensal,% a.m.,mensal
+1,dolar_compra,Taxa de câmbio livre - dólar americano (compra),R$/US$,diaria
+189,igpm_mensal,IGP-M - variação mensal,% a.m.,mensal

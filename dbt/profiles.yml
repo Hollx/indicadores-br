@@ -1,0 +1,14 @@
+indicadores_br:
+  target: prod
+  outputs:
+    prod:
+      type: bigquery
+      method: service-account
+      keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS') }}"
+      project: "{{ env_var('GCP_PROJECT_ID') }}"
+      dataset: silver
+      location: "{{ env_var('BQ_LOCATION', 'US') }}"
+      threads: 2
+      job_execution_timeout_seconds: 300
+      # Proteção de custo: nenhuma consulta pode ler mais de 1 GB.
+      maximum_bytes_billed: 1000000000

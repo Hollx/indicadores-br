@@ -1,0 +1,38 @@
+version: 2
+
+seeds:
+  - name: series_sgs
+    description: Catálogo das séries SGS ingeridas.
+    columns:
+      - name: serie_id
+        data_tests:
+          - unique
+          - not_null
+      - name: periodicidade
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["diaria", "mensal"]
+
+models:
+  - name: stg_sgs__observacoes
+    description: Observações do SGS tipadas e deduplicadas (uma linha por série e data).
+    columns:
+      - name: serie_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('series_sgs')
+                field: serie_id
+      - name: nome_serie
+        description: Nulo indica série ingerida sem cadastro no seed.
+        data_tests:
+          - not_null
+      - name: data_referencia
+        data_tests:
+          - not_null
+      - name: valor
+        description: Nulo indica valor que não pôde ser convertido para número.
+        data_tests:
+          - not_null
