@@ -23,6 +23,11 @@ x-airflow-common: &airflow-common
     GOOGLE_APPLICATION_CREDENTIALS: /opt/airflow/secrets/sa.json
     DBT_PROJECT_DIR: /opt/airflow/dbt
     DBT_PROFILES_DIR: /opt/airflow/dbt
+    # ./dbt é montado do checkout (dono root na VPS) e o Airflow roda sem root:
+    # o dbt escreve logs e artefatos fora dele, em pastas graváveis pelo container.
+    DBT_LOG_PATH: /opt/airflow/logs/dbt
+    DBT_TARGET_PATH: /tmp/dbt-target
+    DBT_SEND_ANONYMOUS_USAGE_STATS: "false"
     DADOS_DIR: /opt/airflow/data
     PYTHONPATH: /opt/airflow
   volumes:
