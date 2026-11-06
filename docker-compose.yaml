@@ -100,5 +100,23 @@ services:
       airflow-init:
         condition: service_completed_successfully
 
+  # Dashboard (Evidence): `evidence serve` consulta a Gold ao vivo, com a service account
+  # só de leitura. Público por escolha (portfólio): a SA só lê a Gold e o projeto é sandbox,
+  # sem faturamento. Na VPS, docker-compose.vps.yaml liga o serviço ao Caddy com HTTPS.
+  dashboard:
+    image: evidencedev/serve:0.12.1
+    restart: unless-stopped
+    environment:
+      GCP_PROJECT_ID: ${GCP_PROJECT_ID}
+      GOOGLE_APPLICATION_CREDENTIALS: /secrets/sa-dashboard.json
+      EVIDENCE_AUTH_DISABLED: "true"
+      EVIDENCE_TELEMETRY_DISABLED: "true"
+    volumes:
+      - ./dashboard:/project:ro
+      - ./secrets/sa-dashboard.json:/secrets/sa-dashboard.json:ro
+    ports:
+      - "127.0.0.1:3000:3000"
+    mem_limit: 512m
+
 volumes:
   pgdata:

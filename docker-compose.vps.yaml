@@ -1,0 +1,14 @@
+# Só na VPS: soma-se ao docker-compose.yaml via COMPOSE_FILE no .env
+#   COMPOSE_FILE=docker-compose.yaml:docker-compose.vps.yaml
+# Põe o dashboard na rede `cadencia`, a do Caddy que já faz HTTPS para os outros serviços
+# da máquina (bloco {$INDICADORES_HOST} no Caddyfile do projeto cadencia).
+services:
+  dashboard:
+    container_name: indicadores-dashboard
+    networks:
+      - default
+      - cadencia
+
+networks:
+  cadencia:
+    external: true

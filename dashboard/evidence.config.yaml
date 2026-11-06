@@ -1,0 +1,5 @@
+project:
+  name: Indicadores BR
+  evidence: "0.12.1"
+
+pages: ./pages

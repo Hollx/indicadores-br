@@ -22,7 +22,11 @@ chmod 700 secrets
 # usa o UID padrão da imagem (50000) e dá a ele as pastas que o container escreve/lê.
 if [[ "$(id -u)" -eq 0 ]]; then
   airflow_uid=50000
-  chown -R "${airflow_uid}:0" data logs secrets
+  chown -R "${airflow_uid}:0" data logs
+  chown "${airflow_uid}:0" secrets
+  [[ -f secrets/sa.json ]] && chown "${airflow_uid}:0" secrets/sa.json
+  # O container do dashboard (imagem evidencedev/serve) roda como uid 10001.
+  [[ -f secrets/sa-dashboard.json ]] && chown 10001:0 secrets/sa-dashboard.json
 else
   airflow_uid="$(id -u)"
 fi
@@ -44,6 +48,9 @@ fi
 
 if [[ ! -f secrets/sa.json ]]; then
   log "Aviso: secrets/sa.json não encontrado. Gere com scripts/criar-chave-sa.sh e copie para a VPS."
+fi
+if [[ ! -f secrets/sa-dashboard.json ]]; then
+  log "Aviso: secrets/sa-dashboard.json não encontrado. Gere com 'scripts/criar-chave-sa.sh dashboard'."
 fi
 
 log "Pronto. Próximo passo: make up"

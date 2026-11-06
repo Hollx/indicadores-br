@@ -4,7 +4,7 @@ models:
   - name: fct_indicadores_mensais
     description: >
       Indicadores econômicos por mês (Selic meta média, dólar médio, IPCA e IGP-M mensais,
-      IPCA acumulado em 12 meses). Fonte para o dashboard no Looker Studio.
+      IPCA acumulado em 12 meses). Fonte do dashboard em Evidence (dashboard/).
     columns:
       - name: mes
         description: Primeiro dia do mês.

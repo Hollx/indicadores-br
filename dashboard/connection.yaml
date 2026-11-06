@@ -1,0 +1,10 @@
+# Conector direto no BigQuery (obrigatório para self-host com `evidence serve`).
+# Sem segredo aqui: a credencial vem de GOOGLE_APPLICATION_CREDENTIALS (ADC),
+# a chave da service account indicadores-br-dashboard, que só lê a Gold.
+type: bigquery
+project: ${GCP_PROJECT_ID}
+adc: true
+location: US
+dataset: gold
+datasets:
+  - gold

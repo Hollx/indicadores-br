@@ -55,3 +55,23 @@ resource "google_bigquery_dataset_iam_member" "editor" {
   role       = "roles/bigquery.dataEditor"
   member     = "serviceAccount:${google_service_account.pipeline.email}"
 }
+
+# Dashboard (Evidence): só lê a Gold. Conta separada do pipeline para não herdar escrita.
+resource "google_service_account" "dashboard" {
+  account_id   = "indicadores-br-dashboard"
+  display_name = "Dashboard indicadores-br (Evidence, só leitura na Gold)"
+
+  depends_on = [google_project_service.apis]
+}
+
+resource "google_project_iam_member" "dashboard_job_user" {
+  project = var.project_id
+  role    = "roles/bigquery.jobUser"
+  member  = "serviceAccount:${google_service_account.dashboard.email}"
+}
+
+resource "google_bigquery_dataset_iam_member" "dashboard_viewer" {
+  dataset_id = google_bigquery_dataset.camadas["gold"].dataset_id
+  role       = "roles/bigquery.dataViewer"
+  member     = "serviceAccount:${google_service_account.dashboard.email}"
+}
