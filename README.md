@@ -134,4 +134,8 @@ tests/            testes unitários (pytest)
 
 - [x] Dashboard em código (Evidence) sobre `gold.fct_indicadores_mensais`
 - [ ] Mais fontes (IBGE SIDRA)
-- [ ] Fase 2: reprocessar a Silver com PySpark (local em Docker, ou na edição gratuita do Databricks)
+- [ ] Fase 2a: PySpark local refazendo a Silver a partir de `data/raw/` (Parquet carregado no BigQuery), com teste de reconciliação contra o dbt no CI
+- [ ] Fase 2b: Databricks Free Edition como lakehouse paralelo (NDJSON enviado para um Volume, mesmo código PySpark gerando tabelas Delta, deploy por Asset Bundles, disparo pelo Airflow). A Free Edition só tem saída de rede para domínios confiáveis, então o Databricks não chama a API do BC nem o BigQuery
+- [ ] Tirar o projeto da VPS atual (checklist em `docs/GUIA-DO-PROJETO.md`)
+
+Guia completo do projeto (ferramentas, arquitetura, histórico): [`docs/GUIA-DO-PROJETO.md`](docs/GUIA-DO-PROJETO.md)
