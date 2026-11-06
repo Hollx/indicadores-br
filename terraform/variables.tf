@@ -26,3 +26,15 @@ variable "camadas" {
   type        = list(string)
   default     = ["bronze", "silver", "gold"]
 }
+
+variable "cota_query_conta_mib_dia" {
+  description = "Teto de bytes consultados por conta por dia no BigQuery, em MiB (10 GiB)."
+  type        = number
+  default     = 10240
+}
+
+variable "cota_query_projeto_mib_dia" {
+  description = "Teto de bytes consultados no projeto por dia no BigQuery, em MiB (30 GiB)."
+  type        = number
+  default     = 30720
+}

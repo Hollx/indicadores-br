@@ -13,6 +13,7 @@ resource "google_project_service" "apis" {
   for_each = toset([
     "bigquery.googleapis.com",
     "iam.googleapis.com",
+    "serviceusage.googleapis.com",
   ])
 
   service            = each.key
@@ -74,4 +75,34 @@ resource "google_bigquery_dataset_iam_member" "dashboard_viewer" {
   dataset_id = google_bigquery_dataset.camadas["gold"].dataset_id
   role       = "roles/bigquery.dataViewer"
   member     = "serviceAccount:${google_service_account.dashboard.email}"
+}
+
+# Teto diário de bytes consultados. O dashboard é público e o `evidence serve` sem senha
+# expõe /api/query (SQL livre com a SA do dashboard). Sem faturamento não há custo, mas
+# esgotar 1 TiB/mês de cota grátis pararia o pipeline. Por conta: 10 GiB/dia; projeto: 30 GiB/dia
+# (~900 GiB/mês, abaixo de 1 TiB). O pipeline consulta poucos MB por dia.
+resource "google_service_usage_consumer_quota_override" "query_por_conta_dia" {
+  provider = google-beta
+
+  project        = var.project_id
+  service        = "bigquery.googleapis.com"
+  metric         = urlencode("bigquery.googleapis.com/quota/query/usage")
+  limit          = urlencode("/d/project/user")
+  override_value = var.cota_query_conta_mib_dia
+  force          = true
+
+  depends_on = [google_project_service.apis]
+}
+
+resource "google_service_usage_consumer_quota_override" "query_projeto_dia" {
+  provider = google-beta
+
+  project        = var.project_id
+  service        = "bigquery.googleapis.com"
+  metric         = urlencode("bigquery.googleapis.com/quota/query/usage")
+  limit          = urlencode("/d/project")
+  override_value = var.cota_query_projeto_mib_dia
+  force          = true
+
+  depends_on = [google_project_service.apis]
 }
