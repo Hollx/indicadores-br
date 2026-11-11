@@ -1,0 +1,17 @@
+# Pacote instalável das transformações PySpark.
+# O bundle do Databricks gera o wheel daqui (`uv build --wheel`) e o instala no ambiente
+# serverless do job. O pyspark não é dependência: o runtime do Databricks já traz o seu.
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "indicadores-spark"
+version = "0.2.1"
+requires-python = ">=3.11"
+
+[project.scripts]
+indicadores-databricks = "indicadores_spark.job_databricks:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["indicadores_spark"]

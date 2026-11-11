@@ -28,7 +28,7 @@ test:
 	python3 -m pytest -q
 
 lint:
-	ruff check airflow tests spark databricks
+	ruff check airflow tests spark
 	shellcheck scripts/*.sh
 
 dbt-build:

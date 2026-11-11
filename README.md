@@ -124,7 +124,9 @@ make spark-test
 make spark-reconcile GCP_PROJECT_ID=SEU-PROJETO
 ```
 
-**Databricks (Free Edition, sem custo):** a Free Edition não tem saída de rede para a API do BC nem para o BigQuery, então a Bronze chega por upload para um Volume e o job serverless (`databricks/job_databricks.py`, implantado pelo Asset Bundle `databricks.yml`) grava `silver_sgs_observacoes` e `gold_indicadores_mensais` em Delta.
+**Databricks (Free Edition, sem custo):** a Free Edition não tem saída de rede para a API do BC nem para o BigQuery, então a Bronze e o catálogo de séries chegam por upload para um Volume do Unity Catalog. O pacote `indicadores_spark` vira um wheel (gerado pelo Asset Bundle `databricks.yml` e guardado em outro Volume), e o job serverless roda como `python_wheel_task` (`indicadores_spark/job_databricks.py`), gravando `silver_sgs_observacoes` e `gold_indicadores_mensais` como tabelas **Delta** gerenciadas. Execução de 2026-11-11: 3201 linhas na Silver e 61 meses na Gold, os mesmos números do Spark local.
+
+Por que wheel e Volume: no serverless da Free Edition, ler arquivos do workspace (importar o pacote via `sys.path`, instalar um wheel guardado no workspace, e até o script de entrada) falhou com `OSError: [Errno 5] Input/output error`. Com o código no wheel e os dados no Volume, o job não depende de arquivo nenhum do workspace.
 
 ```bash
 databricks auth login --host https://SEU-WORKSPACE.cloud.databricks.com
@@ -137,8 +139,8 @@ make databricks-upload databricks-deploy databricks-run
 airflow/          Dockerfile, DAG e código de extração/carga (testável sem Airflow)
 dashboard/        projeto Evidence: páginas em Markdown + SQL e conexão com o BigQuery
 dbt/              projeto dbt: sources, modelos silver/gold, seed, testes
-spark/            fase 2: transformações PySpark, job local, reconciliação e testes
-databricks/       job serverless do Databricks (implantado por databricks.yml)
+spark/            fase 2: pacote PySpark (transformações, job local, job Databricks,
+                  reconciliação) e testes; databricks.yml implanta o job serverless
 terraform/        datasets, service account e IAM no GCP
 scripts/          shell scripts de operação da VPS
 tests/            testes unitários (pytest)
@@ -161,7 +163,8 @@ tests/            testes unitários (pytest)
 - [ ] Mais fontes (IBGE SIDRA)
 - [x] Fase 2a: PySpark local refazendo Silver e Gold a partir de `data/raw/`, com testes no CI e reconciliação contra o dbt (61 meses, 0 divergências)
 - [ ] Carregar o Parquet do Spark no BigQuery e disparar o job Spark pelo Airflow
-- [ ] Fase 2b (código pronto, falta a primeira execução numa conta Free Edition): Databricks Free Edition como lakehouse paralelo (NDJSON enviado para um Volume, mesmo código PySpark gerando tabelas Delta, deploy por Asset Bundles, disparo pelo Airflow). A Free Edition só tem saída de rede para domínios confiáveis, então o Databricks não chama a API do BC nem o BigQuery
+- [x] Fase 2b: Databricks Free Edition como lakehouse paralelo (NDJSON num Volume, mesmo código PySpark gerando tabelas Delta, deploy por Asset Bundles, wheel + `python_wheel_task`)
+- [ ] Disparar o job do Databricks pelo Airflow
 - [ ] Tirar o projeto da VPS atual (checklist em `docs/GUIA-DO-PROJETO.md`)
 
 Guia completo do projeto (ferramentas, arquitetura, histórico): [`docs/GUIA-DO-PROJETO.md`](docs/GUIA-DO-PROJETO.md)

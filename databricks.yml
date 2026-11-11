@@ -2,8 +2,8 @@
 # no Databricks Free Edition, gravando tabelas Delta no Unity Catalog.
 #
 #   databricks auth login --host https://<seu-workspace>.cloud.databricks.com
-#   make databricks-upload      # envia data/raw/sgs para o Volume
-#   make databricks-deploy      # valida e implanta o job
+#   make databricks-upload      # envia a Bronze e o catálogo de séries para o Volume
+#   make databricks-deploy      # gera o wheel, valida e implanta o job
 #   make databricks-run         # executa o job
 bundle:
   name: indicadores-br
@@ -16,11 +16,24 @@ variables:
     description: Schema das tabelas e do Volume da Bronze
     default: indicadores
 
+# O pacote indicadores_spark vai como wheel instalado no ambiente do job. Importá-lo
+# direto dos arquivos do workspace (sys.path) falha no serverless com erro de I/O, e
+# instalar um wheel guardado no workspace também falhou, então os artefatos vão para
+# um Volume do Unity Catalog (criado por scripts/enviar-raw-databricks.sh).
+workspace:
+  artifact_path: /Volumes/${var.catalog}/${var.schema}/artifacts/${workspace.current_user.short_name}
+
+artifacts:
+  indicadores_spark:
+    type: whl
+    path: ./spark
+    build: uv build --wheel
+
+# O job não lê nada do workspace (código no wheel, dados no Volume); o sync só
+# mantém o código-fonte visível no workspace para consulta.
 sync:
   paths:
-    - spark/indicadores_spark
-    - databricks
-    - dbt/seeds
+    - spark
 
 resources:
   jobs:
@@ -29,13 +42,16 @@ resources:
       tasks:
         - task_key: silver_gold_delta
           environment_key: padrao
-          spark_python_task:
-            python_file: databricks/job_databricks.py
+          python_wheel_task:
+            package_name: indicadores_spark
+            entry_point: indicadores-databricks
             parameters: ["--catalog", "${var.catalog}", "--schema", "${var.schema}"]
       environments:
         - environment_key: padrao
           spec:
             environment_version: "2"
+            dependencies:
+              - ./spark/dist/*.whl
 
 targets:
   dev:

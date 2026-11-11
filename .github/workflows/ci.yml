@@ -14,7 +14,7 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install pytest requests ruff
-      - run: ruff check airflow tests spark databricks
+      - run: ruff check airflow tests spark
       - run: pytest -q
 
   spark:

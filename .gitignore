@@ -30,3 +30,4 @@ spark-warehouse/
 metastore_db/
 derby.log
 .databricks/
+spark/dist/
