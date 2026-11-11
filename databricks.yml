@@ -1,0 +1,43 @@
+# Databricks Asset Bundle (fase 2b): o mesmo código PySpark como job serverless
+# no Databricks Free Edition, gravando tabelas Delta no Unity Catalog.
+#
+#   databricks auth login --host https://<seu-workspace>.cloud.databricks.com
+#   make databricks-upload      # envia data/raw/sgs para o Volume
+#   make databricks-deploy      # valida e implanta o job
+#   make databricks-run         # executa o job
+bundle:
+  name: indicadores-br
+
+variables:
+  catalog:
+    description: Catálogo do Unity Catalog (na Free Edition, "workspace")
+    default: workspace
+  schema:
+    description: Schema das tabelas e do Volume da Bronze
+    default: indicadores
+
+sync:
+  paths:
+    - spark/indicadores_spark
+    - databricks
+    - dbt/seeds
+
+resources:
+  jobs:
+    indicadores_spark:
+      name: indicadores-br-spark
+      tasks:
+        - task_key: silver_gold_delta
+          environment_key: padrao
+          spark_python_task:
+            python_file: databricks/job_databricks.py
+            parameters: ["--catalog", "${var.catalog}", "--schema", "${var.schema}"]
+      environments:
+        - environment_key: padrao
+          spec:
+            environment_version: "2"
+
+targets:
+  dev:
+    mode: development
+    default: true

@@ -14,8 +14,22 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install pytest requests ruff
-      - run: ruff check airflow tests
+      - run: ruff check airflow tests spark databricks
       - run: pytest -q
+
+  spark:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install "pyspark==4.0.1" pytest
+      - run: pytest -q spark/tests
 
   shell:
     runs-on: ubuntu-latest

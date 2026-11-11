@@ -4,7 +4,7 @@ version = "0.1.0"
 requires-python = ">=3.11"
 
 [tool.pytest.ini_options]
-pythonpath = ["airflow"]
+pythonpath = ["airflow", "spark"]
 testpaths = ["tests"]
 
 [tool.ruff]
@@ -15,4 +15,4 @@ target-version = "py311"
 select = ["E", "F", "I", "B", "UP"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["include"]
+known-first-party = ["include", "indicadores_spark"]

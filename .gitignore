@@ -23,3 +23,10 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 .venv/
+
+# spark / databricks
+.venv-spark/
+spark-warehouse/
+metastore_db/
+derby.log
+.databricks/
