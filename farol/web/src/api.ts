@@ -4,7 +4,7 @@ const BASE = import.meta.env.VITE_API_URL ?? "/api";
 
 type Estado<T> = { dados: T | null; erro: string | null; carregando: boolean };
 
-/** GET simples na API do Observatório, com estado de carregamento e erro. */
+/** GET simples na API do Farol, com estado de carregamento e erro. */
 export function useApi<T>(caminho: string): Estado<T> {
   const [estado, setEstado] = useState<Estado<T>>({ dados: null, erro: null, carregando: true });
 

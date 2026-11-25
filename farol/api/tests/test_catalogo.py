@@ -4,9 +4,9 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
-from observatorio_api import main
-from observatorio_api.artefatos import LeitorArtefatos
-from observatorio_api.catalogo import montar_catalogo, montar_linhagem, resumir_cobertura
+from farol_api import main
+from farol_api.artefatos import LeitorArtefatos
+from farol_api.catalogo import montar_catalogo, montar_linhagem, resumir_cobertura
 
 FIXTURES = Path(__file__).parent / "fixtures"
 

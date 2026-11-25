@@ -34,7 +34,7 @@ export default function App() {
         <div className="marca">
           <span className="marca-ponto" aria-hidden />
           <div>
-            <strong>Observatório</strong>
+            <strong>Farol</strong>
             <small>pipeline indicadores-br</small>
           </div>
         </div>

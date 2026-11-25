@@ -14,7 +14,7 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install pytest requests ruff
-      - run: ruff check airflow tests spark observatorio
+      - run: ruff check airflow tests spark farol
       - run: pytest -q
 
   spark:
@@ -31,11 +31,11 @@ jobs:
       - run: pip install "pyspark==4.0.1" pytest
       - run: pytest -q spark/tests
 
-  observatorio-api:
+  farol-api:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: observatorio/api
+        working-directory: farol/api
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -44,18 +44,18 @@ jobs:
       - run: pip install -r requirements-dev.txt
       - run: pytest -q
 
-  observatorio-web:
+  farol-web:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: observatorio/web
+        working-directory: farol/web
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
           cache: npm
-          cache-dependency-path: observatorio/web/package-lock.json
+          cache-dependency-path: farol/web/package-lock.json
       - run: npm ci
       - run: npm run build
 

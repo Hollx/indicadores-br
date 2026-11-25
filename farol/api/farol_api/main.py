@@ -1,4 +1,4 @@
-"""Endpoints da API do Observatório. Somente leitura: nada aqui altera o pipeline."""
+"""Endpoints da API do Farol. Somente leitura: nada aqui altera o pipeline."""
 
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ from .catalogo import montar_catalogo, montar_linhagem, resumir_cobertura
 leitor = LeitorArtefatos(Path(os.environ.get("DBT_ARTEFATOS_DIR", "../../dbt/target")))
 
 app = FastAPI(
-    title="Observatório indicadores-br",
+    title="Farol indicadores-br",
     description="Governança, qualidade e monitoramento do pipeline indicadores-br.",
     version="0.1.0",
 )
