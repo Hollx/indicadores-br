@@ -1,0 +1,993 @@
+{
+ "metadata": {
+  "dbt_version": "1.13.0b1",
+  "generated_at": "2026-11-25T18:49:17.744647Z",
+  "project_name": "indicadores_br"
+ },
+ "nodes": {
+  "model.indicadores_br.stg_sgs__observacoes": {
+   "database": "ci",
+   "schema": "silver",
+   "name": "stg_sgs__observacoes",
+   "resource_type": "model",
+   "original_file_path": "models/silver/stg_sgs__observacoes.sql",
+   "unique_id": "model.indicadores_br.stg_sgs__observacoes",
+   "alias": "stg_sgs__observacoes",
+   "config": {
+    "materialized": "view",
+    "meta": {
+     "dono": "Hollx",
+     "camada": "silver",
+     "grao": "uma linha por série e data de referência"
+    },
+    "tags": [
+     "silver",
+     "sgs"
+    ],
+    "freshness": null
+   },
+   "tags": [
+    "silver",
+    "sgs"
+   ],
+   "description": "Observações do SGS tipadas e deduplicadas (uma linha por série e data).",
+   "columns": {
+    "serie_id": {
+     "name": "serie_id",
+     "description": "Código da série no SGS.",
+     "data_type": null
+    },
+    "nome_serie": {
+     "name": "nome_serie",
+     "description": "Nulo indica série ingerida sem cadastro no seed.",
+     "data_type": null
+    },
+    "unidade": {
+     "name": "unidade",
+     "description": "Unidade do valor, vinda do seed series_sgs.",
+     "data_type": null
+    },
+    "periodicidade": {
+     "name": "periodicidade",
+     "description": "Frequência da série, vinda do seed series_sgs.",
+     "data_type": null
+    },
+    "data_referencia": {
+     "name": "data_referencia",
+     "description": "Data a que o valor se refere.",
+     "data_type": null
+    },
+    "valor": {
+     "name": "valor",
+     "description": "Nulo indica valor que não pôde ser convertido para número.",
+     "data_type": null
+    },
+    "ingerido_em": {
+     "name": "ingerido_em",
+     "description": "Momento (UTC) da ingestão mais recente desta observação.",
+     "data_type": null
+    }
+   },
+   "meta": {
+    "dono": "Hollx",
+    "camada": "silver",
+    "grao": "uma linha por série e data de referência"
+   },
+   "relation_name": "`ci`.`silver`.`stg_sgs__observacoes`",
+   "depends_on": {
+    "macros": [],
+    "nodes": [
+     "source.indicadores_br.bronze.sgs_observacoes",
+     "seed.indicadores_br.series_sgs"
+    ]
+   }
+  },
+  "model.indicadores_br.fct_indicadores_mensais": {
+   "database": "ci",
+   "schema": "gold",
+   "name": "fct_indicadores_mensais",
+   "resource_type": "model",
+   "original_file_path": "models/gold/fct_indicadores_mensais.sql",
+   "unique_id": "model.indicadores_br.fct_indicadores_mensais",
+   "alias": "fct_indicadores_mensais",
+   "config": {
+    "materialized": "table",
+    "meta": {
+     "dono": "Hollx",
+     "camada": "gold",
+     "grao": "uma linha por mês",
+     "consumidores": "dashboard Evidence"
+    },
+    "tags": [
+     "gold",
+     "indicadores"
+    ],
+    "freshness": null
+   },
+   "tags": [
+    "gold",
+    "indicadores"
+   ],
+   "description": "Indicadores econômicos por mês (Selic meta média, dólar médio, IPCA e IGP-M mensais, IPCA acumulado em 12 meses). Fonte do dashboard em Evidence (dashboard/).\n",
+   "columns": {
+    "mes": {
+     "name": "mes",
+     "description": "Primeiro dia do mês.",
+     "data_type": null
+    },
+    "selic_meta_media": {
+     "name": "selic_meta_media",
+     "description": "Média diária da meta Selic no mês, em % a.a.",
+     "data_type": null
+    },
+    "dolar_compra_medio": {
+     "name": "dolar_compra_medio",
+     "description": "Média diária do dólar comercial (taxa de câmbio livre, compra) no mês, em R$/US$.",
+     "data_type": null
+    },
+    "ipca_mensal": {
+     "name": "ipca_mensal",
+     "description": "Variação do IPCA no mês, em %.",
+     "data_type": null
+    },
+    "igpm_mensal": {
+     "name": "igpm_mensal",
+     "description": "Variação do IGP-M no mês, em %.",
+     "data_type": null
+    },
+    "ipca_acumulado_12m": {
+     "name": "ipca_acumulado_12m",
+     "description": "Nulo enquanto a janela não tem 12 meses de IPCA.",
+     "data_type": null
+    }
+   },
+   "meta": {
+    "dono": "Hollx",
+    "camada": "gold",
+    "grao": "uma linha por mês",
+    "consumidores": "dashboard Evidence"
+   },
+   "relation_name": "`ci`.`gold`.`fct_indicadores_mensais`",
+   "depends_on": {
+    "macros": [],
+    "nodes": [
+     "model.indicadores_br.stg_sgs__observacoes"
+    ]
+   }
+  },
+  "test.indicadores_br.assert_ipca_faixa_plausivel": {
+   "database": "ci",
+   "schema": "dbt_test__audit",
+   "name": "assert_ipca_faixa_plausivel",
+   "resource_type": "test",
+   "original_file_path": "tests/assert_ipca_faixa_plausivel.sql",
+   "unique_id": "test.indicadores_br.assert_ipca_faixa_plausivel",
+   "alias": "assert_ipca_faixa_plausivel",
+   "config": {
+    "materialized": "test",
+    "meta": {},
+    "tags": [],
+    "severity": "ERROR"
+   },
+   "tags": [],
+   "description": "",
+   "columns": {},
+   "meta": {},
+   "relation_name": null,
+   "depends_on": {
+    "macros": [],
+    "nodes": [
+     "model.indicadores_br.fct_indicadores_mensais"
+    ]
+   }
+  },
+  "test.indicadores_br.assert_sem_duplicidade_serie_data": {
+   "database": "ci",
+   "schema": "dbt_test__audit",
+   "name": "assert_sem_duplicidade_serie_data",
+   "resource_type": "test",
+   "original_file_path": "tests/assert_sem_duplicidade_serie_data.sql",
+   "unique_id": "test.indicadores_br.assert_sem_duplicidade_serie_data",
+   "alias": "assert_sem_duplicidade_serie_data",
+   "config": {
+    "materialized": "test",
+    "meta": {},
+    "tags": [],
+    "severity": "ERROR"
+   },
+   "tags": [],
+   "description": "",
+   "columns": {},
+   "meta": {},
+   "relation_name": null,
+   "depends_on": {
+    "macros": [],
+    "nodes": [
+     "model.indicadores_br.stg_sgs__observacoes"
+    ]
+   }
+  },
+  "seed.indicadores_br.series_sgs": {
+   "database": "ci",
+   "schema": "silver",
+   "name": "series_sgs",
+   "resource_type": "seed",
+   "original_file_path": "seeds/series_sgs.csv",
+   "unique_id": "seed.indicadores_br.series_sgs",
+   "alias": "series_sgs",
+   "config": {
+    "materialized": "seed",
+    "meta": {
+     "dono": "Hollx",
+     "camada": "silver"
+    },
+    "tags": [
+     "silver",
+     "catalogo"
+    ]
+   },
+   "tags": [
+    "silver",
+    "catalogo"
+   ],
+   "description": "Catálogo das séries SGS ingeridas. Fonte única de nome, unidade e periodicidade.",
+   "columns": {
+    "serie_id": {
+     "name": "serie_id",
+     "description": "Código da série no SGS.",
+     "data_type": null
+    },
+    "nome_serie": {
+     "name": "nome_serie",
+     "description": "Nome curto usado nos modelos (ex. selic_meta, ipca_mensal).",
+     "data_type": null
+    },
+    "descricao": {
+     "name": "descricao",
+     "description": "Descrição legível da série.",
+     "data_type": null
+    },
+    "unidade": {
+     "name": "unidade",
+     "description": "Unidade do valor (ex. % a.a., % a.m., R$).",
+     "data_type": null
+    },
+    "periodicidade": {
+     "name": "periodicidade",
+     "description": "Frequência de publicação da série.",
+     "data_type": null
+    }
+   },
+   "meta": {
+    "dono": "Hollx",
+    "camada": "silver"
+   },
+   "relation_name": "`ci`.`silver`.`series_sgs`",
+   "depends_on": {
+    "macros": []
+   }
+  },
+  "test.indicadores_br.not_null_stg_sgs__observacoes_serie_id.28376c2481": {
+   "database": "ci",
+   "schema": "dbt_test__audit",
+   "name": "not_null_stg_sgs__observacoes_serie_id",
+   "resource_type": "test",
+   "original_file_path": "models/silver/silver.yml",
+   "unique_id": "test.indicadores_br.not_null_stg_sgs__observacoes_serie_id.28376c2481",
+   "alias": "not_null_stg_sgs__observacoes_serie_id",
+   "config": {
+    "materialized": "test",
+    "meta": {},
+    "tags": [],
+    "severity": "ERROR"
+   },
+   "tags": [],
+   "description": "",
+   "columns": {},
+   "meta": {},
+   "relation_name": null,
+   "depends_on": {
+    "macros": [
+     "macro.dbt.test_not_null"
+    ],
+    "nodes": [
+     "model.indicadores_br.stg_sgs__observacoes"
+    ]
+   },
+   "column_name": "serie_id",
+   "attached_node": "model.indicadores_br.stg_sgs__observacoes",
+   "test_metadata": {
+    "name": "not_null",
+    "kwargs": {
+     "column_name": "serie_id",
+     "model": "{{ get_where_subquery(ref('stg_sgs__observacoes')) }}"
+    },
+    "namespace": null
+   }
+  },
+  "test.indicadores_br.relationships_stg_sgs__observacoes_serie_id__serie_id__ref_series_sgs_.26838dd762": {
+   "database": "ci",
+   "schema": "dbt_test__audit",
+   "name": "relationships_stg_sgs__observacoes_serie_id__serie_id__ref_series_sgs_",
+   "resource_type": "test",
+   "original_file_path": "models/silver/silver.yml",
+   "unique_id": "test.indicadores_br.relationships_stg_sgs__observacoes_serie_id__serie_id__ref_series_sgs_.26838dd762",
+   "alias": "relationships_stg_sgs__observa_dc080c8a2ddfff2c19d74fa8f8043ea4",
+   "config": {
+    "materialized": "test",
+    "meta": {},
+    "tags": [],
+    "severity": "ERROR"
+   },
+   "tags": [],
+   "description": "",
+   "columns": {},
+   "meta": {},
+   "relation_name": null,
+   "depends_on": {
+    "macros": [
+     "macro.dbt.test_relationships",
+     "macro.dbt.get_where_subquery"
+    ],
+    "nodes": [
+     "seed.indicadores_br.series_sgs",
+     "model.indicadores_br.stg_sgs__observacoes"
+    ]
+   },
+   "column_name": "serie_id",
+   "attached_node": "model.indicadores_br.stg_sgs__observacoes",
+   "test_metadata": {
+    "name": "relationships",
+    "kwargs": {
+     "column_name": "serie_id",
+     "to": "ref('series_sgs')",
+     "field": "serie_id",
+     "model": "{{ get_where_subquery(ref('stg_sgs__observacoes')) }}"
+    },
+    "namespace": null
+   }
+  },
+  "test.indicadores_br.not_null_stg_sgs__observacoes_nome_serie.059a59a4b8": {
+   "database": "ci",
+   "schema": "dbt_test__audit",
+   "name": "not_null_stg_sgs__observacoes_nome_serie",
+   "resource_type": "test",
+   "original_file_path": "models/silver/silver.yml",
+   "unique_id": "test.indicadores_br.not_null_stg_sgs__observacoes_nome_serie.059a59a4b8",
+   "alias": "not_null_stg_sgs__observacoes_nome_serie",
+   "config": {
+    "materialized": "test",
+    "meta": {},
+    "tags": [],
+    "severity": "ERROR"
+   },
+   "tags": [],
+   "description": "",
+   "columns": {},
+   "meta": {},
+   "relation_name": null,
+   "depends_on": {
+    "macros": [
+     "macro.dbt.test_not_null"
+    ],
+    "nodes": [
+     "model.indicadores_br.stg_sgs__observacoes"
+    ]
+   },
+   "column_name": "nome_serie",
+   "attached_node": "model.indicadores_br.stg_sgs__observacoes",
+   "test_metadata": {
+    "name": "not_null",
+    "kwargs": {
+     "column_name": "nome_serie",
+     "model": "{{ get_where_subquery(ref('stg_sgs__observacoes')) }}"
+    },
+    "namespace": null
+   }
+  },
+  "test.indicadores_br.not_null_stg_sgs__observacoes_data_referencia.ececd7a59f": {
+   "database": "ci",
+   "schema": "dbt_test__audit",
+   "name": "not_null_stg_sgs__observacoes_data_referencia",
+   "resource_type": "test",
+   "original_file_path": "models/silver/silver.yml",
+   "unique_id": "test.indicadores_br.not_null_stg_sgs__observacoes_data_referencia.ececd7a59f",
+   "alias": "not_null_stg_sgs__observacoes_data_referencia",
+   "config": {
+    "materialized": "test",
+    "meta": {},
+    "tags": [],
+    "severity": "ERROR"
+   },
+   "tags": [],
+   "description": "",
+   "columns": {},
+   "meta": {},
+   "relation_name": null,
+   "depends_on": {
+    "macros": [
+     "macro.dbt.test_not_null"
+    ],
+    "nodes": [
+     "model.indicadores_br.stg_sgs__observacoes"
+    ]
+   },
+   "column_name": "data_referencia",
+   "attached_node": "model.indicadores_br.stg_sgs__observacoes",
+   "test_metadata": {
+    "name": "not_null",
+    "kwargs": {
+     "column_name": "data_referencia",
+     "model": "{{ get_where_subquery(ref('stg_sgs__observacoes')) }}"
+    },
+    "namespace": null
+   }
+  },
+  "test.indicadores_br.not_null_stg_sgs__observacoes_valor.ac7db19fe9": {
+   "database": "ci",
+   "schema": "dbt_test__audit",
+   "name": "not_null_stg_sgs__observacoes_valor",
+   "resource_type": "test",
+   "original_file_path": "models/silver/silver.yml",
+   "unique_id": "test.indicadores_br.not_null_stg_sgs__observacoes_valor.ac7db19fe9",
+   "alias": "not_null_stg_sgs__observacoes_valor",
+   "config": {
+    "materialized": "test",
+    "meta": {},
+    "tags": [],
+    "severity": "ERROR"
+   },
+   "tags": [],
+   "description": "",
+   "columns": {},
+   "meta": {},
+   "relation_name": null,
+   "depends_on": {
+    "macros": [
+     "macro.dbt.test_not_null"
+    ],
+    "nodes": [
+     "model.indicadores_br.stg_sgs__observacoes"
+    ]
+   },
+   "column_name": "valor",
+   "attached_node": "model.indicadores_br.stg_sgs__observacoes",
+   "test_metadata": {
+    "name": "not_null",
+    "kwargs": {
+     "column_name": "valor",
+     "model": "{{ get_where_subquery(ref('stg_sgs__observacoes')) }}"
+    },
+    "namespace": null
+   }
+  },
+  "test.indicadores_br.unique_series_sgs_serie_id.1e7938e7ae": {
+   "database": "ci",
+   "schema": "dbt_test__audit",
+   "name": "unique_series_sgs_serie_id",
+   "resource_type": "test",
+   "original_file_path": "models/silver/silver.yml",
+   "unique_id": "test.indicadores_br.unique_series_sgs_serie_id.1e7938e7ae",
+   "alias": "unique_series_sgs_serie_id",
+   "config": {
+    "materialized": "test",
+    "meta": {},
+    "tags": [],
+    "severity": "ERROR"
+   },
+   "tags": [],
+   "description": "",
+   "columns": {},
+   "meta": {},
+   "relation_name": null,
+   "depends_on": {
+    "macros": [
+     "macro.dbt.test_unique"
+    ],
+    "nodes": [
+     "seed.indicadores_br.series_sgs"
+    ]
+   },
+   "column_name": "serie_id",
+   "attached_node": "seed.indicadores_br.series_sgs",
+   "test_metadata": {
+    "name": "unique",
+    "kwargs": {
+     "column_name": "serie_id",
+     "model": "{{ get_where_subquery(ref('series_sgs')) }}"
+    },
+    "namespace": null
+   }
+  },
+  "test.indicadores_br.not_null_series_sgs_serie_id.16e850fd11": {
+   "database": "ci",
+   "schema": "dbt_test__audit",
+   "name": "not_null_series_sgs_serie_id",
+   "resource_type": "test",
+   "original_file_path": "models/silver/silver.yml",
+   "unique_id": "test.indicadores_br.not_null_series_sgs_serie_id.16e850fd11",
+   "alias": "not_null_series_sgs_serie_id",
+   "config": {
+    "materialized": "test",
+    "meta": {},
+    "tags": [],
+    "severity": "ERROR"
+   },
+   "tags": [],
+   "description": "",
+   "columns": {},
+   "meta": {},
+   "relation_name": null,
+   "depends_on": {
+    "macros": [
+     "macro.dbt.test_not_null"
+    ],
+    "nodes": [
+     "seed.indicadores_br.series_sgs"
+    ]
+   },
+   "column_name": "serie_id",
+   "attached_node": "seed.indicadores_br.series_sgs",
+   "test_metadata": {
+    "name": "not_null",
+    "kwargs": {
+     "column_name": "serie_id",
+     "model": "{{ get_where_subquery(ref('series_sgs')) }}"
+    },
+    "namespace": null
+   }
+  },
+  "test.indicadores_br.accepted_values_series_sgs_periodicidade__diaria__mensal.48195e03a7": {
+   "database": "ci",
+   "schema": "dbt_test__audit",
+   "name": "accepted_values_series_sgs_periodicidade__diaria__mensal",
+   "resource_type": "test",
+   "original_file_path": "models/silver/silver.yml",
+   "unique_id": "test.indicadores_br.accepted_values_series_sgs_periodicidade__diaria__mensal.48195e03a7",
+   "alias": "accepted_values_series_sgs_periodicidade__diaria__mensal",
+   "config": {
+    "materialized": "test",
+    "meta": {},
+    "tags": [],
+    "severity": "ERROR"
+   },
+   "tags": [],
+   "description": "",
+   "columns": {},
+   "meta": {},
+   "relation_name": null,
+   "depends_on": {
+    "macros": [
+     "macro.dbt.test_accepted_values",
+     "macro.dbt.get_where_subquery"
+    ],
+    "nodes": [
+     "seed.indicadores_br.series_sgs"
+    ]
+   },
+   "column_name": "periodicidade",
+   "attached_node": "seed.indicadores_br.series_sgs",
+   "test_metadata": {
+    "name": "accepted_values",
+    "kwargs": {
+     "column_name": "periodicidade",
+     "values": [
+      "diaria",
+      "mensal"
+     ],
+     "model": "{{ get_where_subquery(ref('series_sgs')) }}"
+    },
+    "namespace": null
+   }
+  },
+  "test.indicadores_br.unique_fct_indicadores_mensais_mes.7cadf87bdf": {
+   "database": "ci",
+   "schema": "dbt_test__audit",
+   "name": "unique_fct_indicadores_mensais_mes",
+   "resource_type": "test",
+   "original_file_path": "models/gold/gold.yml",
+   "unique_id": "test.indicadores_br.unique_fct_indicadores_mensais_mes.7cadf87bdf",
+   "alias": "unique_fct_indicadores_mensais_mes",
+   "config": {
+    "materialized": "test",
+    "meta": {},
+    "tags": [],
+    "severity": "ERROR"
+   },
+   "tags": [],
+   "description": "",
+   "columns": {},
+   "meta": {},
+   "relation_name": null,
+   "depends_on": {
+    "macros": [
+     "macro.dbt.test_unique"
+    ],
+    "nodes": [
+     "model.indicadores_br.fct_indicadores_mensais"
+    ]
+   },
+   "column_name": "mes",
+   "attached_node": "model.indicadores_br.fct_indicadores_mensais",
+   "test_metadata": {
+    "name": "unique",
+    "kwargs": {
+     "column_name": "mes",
+     "model": "{{ get_where_subquery(ref('fct_indicadores_mensais')) }}"
+    },
+    "namespace": null
+   }
+  },
+  "test.indicadores_br.not_null_fct_indicadores_mensais_mes.bcf3f8c0b0": {
+   "database": "ci",
+   "schema": "dbt_test__audit",
+   "name": "not_null_fct_indicadores_mensais_mes",
+   "resource_type": "test",
+   "original_file_path": "models/gold/gold.yml",
+   "unique_id": "test.indicadores_br.not_null_fct_indicadores_mensais_mes.bcf3f8c0b0",
+   "alias": "not_null_fct_indicadores_mensais_mes",
+   "config": {
+    "materialized": "test",
+    "meta": {},
+    "tags": [],
+    "severity": "ERROR"
+   },
+   "tags": [],
+   "description": "",
+   "columns": {},
+   "meta": {},
+   "relation_name": null,
+   "depends_on": {
+    "macros": [
+     "macro.dbt.test_not_null"
+    ],
+    "nodes": [
+     "model.indicadores_br.fct_indicadores_mensais"
+    ]
+   },
+   "column_name": "mes",
+   "attached_node": "model.indicadores_br.fct_indicadores_mensais",
+   "test_metadata": {
+    "name": "not_null",
+    "kwargs": {
+     "column_name": "mes",
+     "model": "{{ get_where_subquery(ref('fct_indicadores_mensais')) }}"
+    },
+    "namespace": null
+   }
+  },
+  "test.indicadores_br.source_not_null_bronze_sgs_observacoes_serie_id.3842afb78e": {
+   "database": "ci",
+   "schema": "dbt_test__audit",
+   "name": "source_not_null_bronze_sgs_observacoes_serie_id",
+   "resource_type": "test",
+   "original_file_path": "models/sources.yml",
+   "unique_id": "test.indicadores_br.source_not_null_bronze_sgs_observacoes_serie_id.3842afb78e",
+   "alias": "source_not_null_bronze_sgs_observacoes_serie_id",
+   "config": {
+    "materialized": "test",
+    "meta": {},
+    "tags": [],
+    "severity": "ERROR"
+   },
+   "tags": [],
+   "description": "",
+   "columns": {},
+   "meta": {},
+   "relation_name": null,
+   "depends_on": {
+    "macros": [
+     "macro.dbt.test_not_null"
+    ],
+    "nodes": [
+     "source.indicadores_br.bronze.sgs_observacoes"
+    ]
+   },
+   "column_name": "serie_id",
+   "attached_node": null,
+   "test_metadata": {
+    "name": "not_null",
+    "kwargs": {
+     "column_name": "serie_id",
+     "model": "{{ get_where_subquery(source('bronze', 'sgs_observacoes')) }}"
+    },
+    "namespace": null
+   }
+  },
+  "test.indicadores_br.source_not_null_bronze_sgs_observacoes_data_referencia.02ee576c80": {
+   "database": "ci",
+   "schema": "dbt_test__audit",
+   "name": "source_not_null_bronze_sgs_observacoes_data_referencia",
+   "resource_type": "test",
+   "original_file_path": "models/sources.yml",
+   "unique_id": "test.indicadores_br.source_not_null_bronze_sgs_observacoes_data_referencia.02ee576c80",
+   "alias": "source_not_null_bronze_sgs_observacoes_data_referencia",
+   "config": {
+    "materialized": "test",
+    "meta": {},
+    "tags": [],
+    "severity": "ERROR"
+   },
+   "tags": [],
+   "description": "",
+   "columns": {},
+   "meta": {},
+   "relation_name": null,
+   "depends_on": {
+    "macros": [
+     "macro.dbt.test_not_null"
+    ],
+    "nodes": [
+     "source.indicadores_br.bronze.sgs_observacoes"
+    ]
+   },
+   "column_name": "data_referencia",
+   "attached_node": null,
+   "test_metadata": {
+    "name": "not_null",
+    "kwargs": {
+     "column_name": "data_referencia",
+     "model": "{{ get_where_subquery(source('bronze', 'sgs_observacoes')) }}"
+    },
+    "namespace": null
+   }
+  },
+  "test.indicadores_br.source_not_null_bronze_sgs_observacoes_ingerido_em.3f80680363": {
+   "database": "ci",
+   "schema": "dbt_test__audit",
+   "name": "source_not_null_bronze_sgs_observacoes_ingerido_em",
+   "resource_type": "test",
+   "original_file_path": "models/sources.yml",
+   "unique_id": "test.indicadores_br.source_not_null_bronze_sgs_observacoes_ingerido_em.3f80680363",
+   "alias": "source_not_null_bronze_sgs_observacoes_ingerido_em",
+   "config": {
+    "materialized": "test",
+    "meta": {},
+    "tags": [],
+    "severity": "ERROR"
+   },
+   "tags": [],
+   "description": "",
+   "columns": {},
+   "meta": {},
+   "relation_name": null,
+   "depends_on": {
+    "macros": [
+     "macro.dbt.test_not_null"
+    ],
+    "nodes": [
+     "source.indicadores_br.bronze.sgs_observacoes"
+    ]
+   },
+   "column_name": "ingerido_em",
+   "attached_node": null,
+   "test_metadata": {
+    "name": "not_null",
+    "kwargs": {
+     "column_name": "ingerido_em",
+     "model": "{{ get_where_subquery(source('bronze', 'sgs_observacoes')) }}"
+    },
+    "namespace": null
+   }
+  }
+ },
+ "sources": {
+  "source.indicadores_br.bronze.sgs_observacoes": {
+   "database": "ci",
+   "schema": "bronze",
+   "name": "sgs_observacoes",
+   "resource_type": "source",
+   "original_file_path": "models/sources.yml",
+   "unique_id": "source.indicadores_br.bronze.sgs_observacoes",
+   "source_name": "bronze",
+   "loaded_at_field": "ingerido_em",
+   "freshness": {
+    "warn_after": {
+     "count": 26,
+     "period": "hour"
+    },
+    "error_after": {
+     "count": 50,
+     "period": "hour"
+    },
+    "filter": null
+   },
+   "description": "Uma linha por série e data, valor ainda como texto.",
+   "columns": {
+    "serie_id": {
+     "name": "serie_id",
+     "description": "Código da série no SGS (ex. 432 = Selic meta).",
+     "data_type": null
+    },
+    "data_referencia": {
+     "name": "data_referencia",
+     "description": "Data a que o valor se refere, como publicada pelo Banco Central.",
+     "data_type": null
+    },
+    "valor_texto": {
+     "name": "valor_texto",
+     "description": "Valor como texto, exatamente como veio da API (vírgula decimal possível).",
+     "data_type": null
+    },
+    "ingerido_em": {
+     "name": "ingerido_em",
+     "description": "Momento (UTC) em que o Airflow baixou a série. Base do teste de frescor.",
+     "data_type": null
+    }
+   },
+   "meta": {
+    "dono": "Hollx",
+    "camada": "bronze",
+    "origem": "API SGS do Banco Central (pública, sem chave)",
+    "atualizacao": "diária, 09:00 UTC (DAG indicadores_br)"
+   },
+   "tags": [
+    "bronze",
+    "sgs"
+   ],
+   "config": {
+    "meta": {
+     "dono": "Hollx",
+     "camada": "bronze",
+     "origem": "API SGS do Banco Central (pública, sem chave)",
+     "atualizacao": "diária, 09:00 UTC (DAG indicadores_br)"
+    },
+    "tags": [
+     "bronze",
+     "sgs"
+    ],
+    "freshness": {
+     "warn_after": {
+      "count": 26,
+      "period": "hour"
+     },
+     "error_after": {
+      "count": 50,
+      "period": "hour"
+     },
+     "filter": null
+    }
+   },
+   "relation_name": "`ci`.`bronze`.`sgs_observacoes`"
+  }
+ },
+ "exposures": {
+  "exposure.indicadores_br.dashboard_indicadores": {
+   "name": "dashboard_indicadores",
+   "resource_type": "exposure",
+   "original_file_path": "models/gold/gold.yml",
+   "unique_id": "exposure.indicadores_br.dashboard_indicadores",
+   "type": "dashboard",
+   "owner": {
+    "email": null,
+    "name": "Hollx"
+   },
+   "description": "Dashboard público com Selic, IPCA, IGP-M, dólar e juro real, lido da camada Gold.",
+   "label": "Dashboard de indicadores (Evidence)",
+   "maturity": "high",
+   "meta": {},
+   "tags": [
+    "visualizacao"
+   ],
+   "config": {
+    "meta": {},
+    "tags": [
+     "visualizacao"
+    ]
+   },
+   "url": null,
+   "depends_on": {
+    "macros": [],
+    "nodes": [
+     "model.indicadores_br.fct_indicadores_mensais"
+    ]
+   }
+  }
+ },
+ "parent_map": {
+  "model.indicadores_br.stg_sgs__observacoes": [
+   "seed.indicadores_br.series_sgs",
+   "source.indicadores_br.bronze.sgs_observacoes"
+  ],
+  "model.indicadores_br.fct_indicadores_mensais": [
+   "model.indicadores_br.stg_sgs__observacoes"
+  ],
+  "test.indicadores_br.assert_ipca_faixa_plausivel": [
+   "model.indicadores_br.fct_indicadores_mensais"
+  ],
+  "test.indicadores_br.assert_sem_duplicidade_serie_data": [
+   "model.indicadores_br.stg_sgs__observacoes"
+  ],
+  "seed.indicadores_br.series_sgs": [],
+  "test.indicadores_br.not_null_stg_sgs__observacoes_serie_id.28376c2481": [
+   "model.indicadores_br.stg_sgs__observacoes"
+  ],
+  "test.indicadores_br.relationships_stg_sgs__observacoes_serie_id__serie_id__ref_series_sgs_.26838dd762": [
+   "model.indicadores_br.stg_sgs__observacoes",
+   "seed.indicadores_br.series_sgs"
+  ],
+  "test.indicadores_br.not_null_stg_sgs__observacoes_nome_serie.059a59a4b8": [
+   "model.indicadores_br.stg_sgs__observacoes"
+  ],
+  "test.indicadores_br.not_null_stg_sgs__observacoes_data_referencia.ececd7a59f": [
+   "model.indicadores_br.stg_sgs__observacoes"
+  ],
+  "test.indicadores_br.not_null_stg_sgs__observacoes_valor.ac7db19fe9": [
+   "model.indicadores_br.stg_sgs__observacoes"
+  ],
+  "test.indicadores_br.unique_series_sgs_serie_id.1e7938e7ae": [
+   "seed.indicadores_br.series_sgs"
+  ],
+  "test.indicadores_br.not_null_series_sgs_serie_id.16e850fd11": [
+   "seed.indicadores_br.series_sgs"
+  ],
+  "test.indicadores_br.accepted_values_series_sgs_periodicidade__diaria__mensal.48195e03a7": [
+   "seed.indicadores_br.series_sgs"
+  ],
+  "test.indicadores_br.unique_fct_indicadores_mensais_mes.7cadf87bdf": [
+   "model.indicadores_br.fct_indicadores_mensais"
+  ],
+  "test.indicadores_br.not_null_fct_indicadores_mensais_mes.bcf3f8c0b0": [
+   "model.indicadores_br.fct_indicadores_mensais"
+  ],
+  "test.indicadores_br.source_not_null_bronze_sgs_observacoes_serie_id.3842afb78e": [
+   "source.indicadores_br.bronze.sgs_observacoes"
+  ],
+  "test.indicadores_br.source_not_null_bronze_sgs_observacoes_data_referencia.02ee576c80": [
+   "source.indicadores_br.bronze.sgs_observacoes"
+  ],
+  "test.indicadores_br.source_not_null_bronze_sgs_observacoes_ingerido_em.3f80680363": [
+   "source.indicadores_br.bronze.sgs_observacoes"
+  ],
+  "source.indicadores_br.bronze.sgs_observacoes": [],
+  "exposure.indicadores_br.dashboard_indicadores": [
+   "model.indicadores_br.fct_indicadores_mensais"
+  ]
+ },
+ "child_map": {
+  "model.indicadores_br.stg_sgs__observacoes": [
+   "model.indicadores_br.fct_indicadores_mensais",
+   "test.indicadores_br.assert_sem_duplicidade_serie_data",
+   "test.indicadores_br.not_null_stg_sgs__observacoes_data_referencia.ececd7a59f",
+   "test.indicadores_br.not_null_stg_sgs__observacoes_nome_serie.059a59a4b8",
+   "test.indicadores_br.not_null_stg_sgs__observacoes_serie_id.28376c2481",
+   "test.indicadores_br.not_null_stg_sgs__observacoes_valor.ac7db19fe9",
+   "test.indicadores_br.relationships_stg_sgs__observacoes_serie_id__serie_id__ref_series_sgs_.26838dd762"
+  ],
+  "model.indicadores_br.fct_indicadores_mensais": [
+   "exposure.indicadores_br.dashboard_indicadores",
+   "test.indicadores_br.assert_ipca_faixa_plausivel",
+   "test.indicadores_br.not_null_fct_indicadores_mensais_mes.bcf3f8c0b0",
+   "test.indicadores_br.unique_fct_indicadores_mensais_mes.7cadf87bdf"
+  ],
+  "test.indicadores_br.assert_ipca_faixa_plausivel": [],
+  "test.indicadores_br.assert_sem_duplicidade_serie_data": [],
+  "seed.indicadores_br.series_sgs": [
+   "model.indicadores_br.stg_sgs__observacoes",
+   "test.indicadores_br.accepted_values_series_sgs_periodicidade__diaria__mensal.48195e03a7",
+   "test.indicadores_br.not_null_series_sgs_serie_id.16e850fd11",
+   "test.indicadores_br.relationships_stg_sgs__observacoes_serie_id__serie_id__ref_series_sgs_.26838dd762",
+   "test.indicadores_br.unique_series_sgs_serie_id.1e7938e7ae"
+  ],
+  "test.indicadores_br.not_null_stg_sgs__observacoes_serie_id.28376c2481": [],
+  "test.indicadores_br.relationships_stg_sgs__observacoes_serie_id__serie_id__ref_series_sgs_.26838dd762": [],
+  "test.indicadores_br.not_null_stg_sgs__observacoes_nome_serie.059a59a4b8": [],
+  "test.indicadores_br.not_null_stg_sgs__observacoes_data_referencia.ececd7a59f": [],
+  "test.indicadores_br.not_null_stg_sgs__observacoes_valor.ac7db19fe9": [],
+  "test.indicadores_br.unique_series_sgs_serie_id.1e7938e7ae": [],
+  "test.indicadores_br.not_null_series_sgs_serie_id.16e850fd11": [],
+  "test.indicadores_br.accepted_values_series_sgs_periodicidade__diaria__mensal.48195e03a7": [],
+  "test.indicadores_br.unique_fct_indicadores_mensais_mes.7cadf87bdf": [],
+  "test.indicadores_br.not_null_fct_indicadores_mensais_mes.bcf3f8c0b0": [],
+  "test.indicadores_br.source_not_null_bronze_sgs_observacoes_serie_id.3842afb78e": [],
+  "test.indicadores_br.source_not_null_bronze_sgs_observacoes_data_referencia.02ee576c80": [],
+  "test.indicadores_br.source_not_null_bronze_sgs_observacoes_ingerido_em.3f80680363": [],
+  "source.indicadores_br.bronze.sgs_observacoes": [
+   "model.indicadores_br.stg_sgs__observacoes",
+   "test.indicadores_br.source_not_null_bronze_sgs_observacoes_data_referencia.02ee576c80",
+   "test.indicadores_br.source_not_null_bronze_sgs_observacoes_ingerido_em.3f80680363",
+   "test.indicadores_br.source_not_null_bronze_sgs_observacoes_serie_id.3842afb78e"
+  ],
+  "exposure.indicadores_br.dashboard_indicadores": []
+ }
+}

@@ -14,7 +14,7 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install pytest requests ruff
-      - run: ruff check airflow tests spark
+      - run: ruff check airflow tests spark observatorio
       - run: pytest -q
 
   spark:
@@ -30,6 +30,19 @@ jobs:
           python-version: "3.12"
       - run: pip install "pyspark==4.0.1" pytest
       - run: pytest -q spark/tests
+
+  observatorio-api:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: observatorio/api
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements-dev.txt
+      - run: pytest -q
 
   shell:
     runs-on: ubuntu-latest
