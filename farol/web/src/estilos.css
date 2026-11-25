@@ -1533,3 +1533,62 @@ p {
 .caso-fase {
   margin-bottom: 8px;
 }
+
+.quem-fez {
+  margin-top: 0;
+  padding: 20px 22px;
+}
+.quem-fez h1 {
+  font-size: var(--fs-title);
+}
+.quem-fez-cargo {
+  color: var(--muted);
+  font-weight: 400;
+}
+.quem-fez-frase {
+  margin-top: 6px;
+  color: var(--text);
+}
+.quem-fez-nota {
+  margin-top: 6px;
+  color: var(--muted);
+}
+.quem-fez-extra {
+  grid-column: 2 / -1;
+}
+.quem-fez-extra .explica {
+  margin-top: 4px;
+}
+.achado-secao {
+  margin: 0 0 4px;
+}
+@media (max-width: 860px) {
+  .quem-fez-extra {
+    grid-column: 1 / -1;
+  }
+}
+.quem-fez-iniciais {
+  align-self: start;
+  margin-top: 2px;
+}
+@media (max-width: 640px) {
+  .quem-fez {
+    grid-template-columns: 1fr;
+    padding: 16px;
+  }
+  .quem-fez-iniciais {
+    display: none;
+  }
+  .quem-fez-cargo {
+    display: block;
+  }
+}
+.quem-fez-sep {
+  color: var(--muted);
+  font-weight: 400;
+}
+@media (max-width: 640px) {
+  .quem-fez-sep {
+    display: none;
+  }
+}

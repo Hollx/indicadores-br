@@ -1,6 +1,6 @@
 import { REPOSITORIO } from "../App";
 import { useApi } from "../api";
-import { Cartao, Indisponivel, Status, TituloTela, duracao, quando } from "../componentes";
+import { Cartao, Indisponivel, Status, duracao, quando } from "../componentes";
 import { QuemFez } from "../componentes-autor";
 import { Explica, Termo } from "../glossario";
 import { data, formatarNumero, rotuloMes } from "../graficos/escalas";
@@ -199,16 +199,7 @@ export default function VisaoGeral() {
 
   return (
     <>
-      <TituloTela
-        titulo="Visão geral"
-        achado={
-          painel.dados
-            ? frase(painel.dados, execucao.dados)
-            : painel.carregando
-              ? "Verificando o pipeline…"
-              : null
-        }
-      >
+      <QuemFez>
         <Explica titulo="O que é o Farol?">
           <p>
             O Farol acompanha um <Termo id="pipeline">pipeline de dados</Termo> que, todo dia, busca os juros,
@@ -221,13 +212,11 @@ export default function VisaoGeral() {
             de dados usa para cuidar dos dados de uma empresa, aqui feito com dados públicos.
           </p>
         </Explica>
-      </TituloTela>
-
-      <QuemFez />
+      </QuemFez>
 
       <section className="secao" aria-labelledby="rota-titulo">
         <div className="secao-topo">
-          <h2 id="rota-titulo">A rota do dado, na última execução</h2>
+          <h2 id="rota-titulo">O pipeline agora</h2>
           {painel.dados?.execucao_airflow && (
             <p>
               {quando(painel.dados.execucao_airflow.inicio)} ·{" "}
@@ -235,6 +224,7 @@ export default function VisaoGeral() {
             </p>
           )}
         </div>
+        {painel.dados && <p className="achado achado-secao">{frase(painel.dados, execucao.dados)}</p>}
         {painel.erro ? (
           <Indisponivel erro={painel.erro} oQue="A situação do pipeline" />
         ) : (

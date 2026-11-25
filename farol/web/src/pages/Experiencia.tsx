@@ -1,6 +1,5 @@
 import { TituloTela } from "../componentes";
-import { AUTOR, CARGOS, CASOS, EM_NUMEROS, FORMACAO, type Caso } from "../conteudo/autor";
-import { Cartao } from "../componentes";
+import { AUTOR, CARGOS, CASOS, FORMACAO, type Caso } from "../conteudo/autor";
 import { Explica } from "../glossario";
 import { IconeExterno } from "../icones";
 
@@ -70,12 +69,6 @@ export default function Experiencia() {
           <p>O código do Farol e do pipeline que ele monitora é aberto e está no GitHub.</p>
         </Explica>
       </TituloTela>
-
-      <div className="cartoes" aria-label="Em números">
-        {EM_NUMEROS.map((n) => (
-          <Cartao key={n.rotulo} rotulo={n.rotulo} valor={n.valor} detalhe={n.detalhe} />
-        ))}
-      </div>
 
       <section className="secao" aria-labelledby="trajetoria-titulo">
         <div className="secao-topo">

@@ -55,14 +55,6 @@ export const FORMACAO = [
   "Técnico em Hardware e Redes, Data Byte (2015)",
 ];
 
-/** Números agregados do trabalho com dados (sem clientes nem códigos de chamado). */
-export const EM_NUMEROS = [
-  { valor: "383", rotulo: "entregas de dados", detalhe: "jan/2025 a jul/2026" },
-  { valor: "21", rotulo: "entregas por mês", detalhe: "em média" },
-  { valor: "2 dias", rotulo: "prazo mediano", detalhe: "31% resolvidas no mesmo dia" },
-  { valor: "30%", rotulo: "das entregas são relatórios", detalhe: "118 de 386 chamados" },
-];
-
 export const CASOS: Caso[] = [
   {
     id: "assistente",
