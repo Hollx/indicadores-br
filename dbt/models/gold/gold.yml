@@ -4,14 +4,14 @@ models:
   - name: fct_indicadores_mensais
     description: >
       Indicadores econômicos por mês (Selic meta média, dólar médio, IPCA e IGP-M mensais,
-      IPCA acumulado em 12 meses). Fonte do dashboard em Evidence (dashboard/).
+      IPCA acumulado em 12 meses). Lida pela página Indicadores do Farol.
     config:
       tags: ["gold", "indicadores"]
       meta:
         dono: Hollx
         camada: gold
         grao: uma linha por mês
-        consumidores: dashboard Evidence
+        consumidores: Farol (página Indicadores)
     columns:
       - name: mes
         description: Primeiro dia do mês.
@@ -80,18 +80,6 @@ models:
         description: Se o realizado caiu entre a menor e a maior projeção.
 
 exposures:
-  - name: dashboard_indicadores
-    label: Dashboard de indicadores (Evidence)
-    type: dashboard
-    maturity: high
-    description: Dashboard público com Selic, IPCA, IGP-M, dólar e juro real, lido da camada Gold.
-    depends_on:
-      - ref('fct_indicadores_mensais')
-    owner:
-      name: Hollx
-    config:
-      tags: ["visualizacao"]
-
   - name: farol_indicadores
     label: Farol, página Indicadores
     type: application

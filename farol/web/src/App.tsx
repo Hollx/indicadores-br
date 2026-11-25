@@ -10,7 +10,10 @@ import {
   IconeInicio,
   IconeLinhagem,
   IconeMenu,
+  IconeAuto,
+  IconeLua,
   IconeQualidade,
+  IconeSol,
 } from "./icones";
 import { MarcaFarol } from "./marca";
 import Catalogo from "./pages/Catalogo";
@@ -19,7 +22,27 @@ import Linhagem from "./pages/Linhagem";
 import Monitoramento from "./pages/Monitoramento";
 import Qualidade from "./pages/Qualidade";
 import VisaoGeral from "./pages/VisaoGeral";
+import { aplicar, useTema, type Preferencia } from "./tema";
 import type { PainelEtapas } from "./tipos";
+
+const PROXIMO: Record<Preferencia, Preferencia> = { auto: "claro", claro: "escuro", escuro: "auto" };
+const ROTULO_TEMA: Record<Preferencia, string> = { auto: "Automático", claro: "Claro", escuro: "Escuro" };
+
+function BotaoTema() {
+  const { preferencia } = useTema();
+  const Icone = preferencia === "claro" ? IconeSol : preferencia === "escuro" ? IconeLua : IconeAuto;
+  return (
+    <button
+      className="botao-tema"
+      onClick={() => aplicar(PROXIMO[preferencia])}
+      aria-label={`Tema: ${ROTULO_TEMA[preferencia]}. Trocar para ${ROTULO_TEMA[PROXIMO[preferencia]]}`}
+      title="Trocar o tema"
+    >
+      <Icone />
+      <span>{ROTULO_TEMA[preferencia]}</span>
+    </button>
+  );
+}
 
 export const REPOSITORIO = "https://github.com/Hollx/indicadores-br";
 
@@ -168,7 +191,10 @@ export default function App() {
         <span className="trilha">
           Farol <span aria-hidden>/</span> <strong>{atual.titulo}</strong>
         </span>
-        <Frescor />
+        <div className="topo-direita">
+          <Frescor />
+          <BotaoTema />
+        </div>
       </div>
 
       <main className="folha">

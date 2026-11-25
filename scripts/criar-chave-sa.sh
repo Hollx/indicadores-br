@@ -5,7 +5,7 @@
 #
 # Uso: ./scripts/criar-chave-sa.sh [pipeline|dashboard]
 #   pipeline  (padrão) secrets/sa.json            Airflow + dbt
-#   dashboard          secrets/sa-dashboard.json  Evidence, só leitura na Gold
+#   dashboard          secrets/sa-dashboard.json  Farol, só leitura na Gold
 set -euo pipefail
 
 RAIZ="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"

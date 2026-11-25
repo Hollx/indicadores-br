@@ -57,7 +57,7 @@ resource "google_bigquery_dataset_iam_member" "editor" {
   member     = "serviceAccount:${google_service_account.pipeline.email}"
 }
 
-# Dashboard (Evidence): só lê a Gold. Conta separada do pipeline para não herdar escrita.
+# Farol (antes o dashboard em Evidence): só lê a Gold. Conta separada do pipeline para não herdar escrita.
 resource "google_service_account" "dashboard" {
   account_id   = "indicadores-br-dashboard"
   display_name = "Dashboard indicadores-br (Evidence, só leitura na Gold)"
@@ -77,8 +77,8 @@ resource "google_bigquery_dataset_iam_member" "dashboard_viewer" {
   member     = "serviceAccount:${google_service_account.dashboard.email}"
 }
 
-# Teto diário de bytes consultados. O dashboard é público e o `evidence serve` sem senha
-# expõe /api/query (SQL livre com a SA do dashboard). Sem faturamento não há custo, mas
+# Teto diário de bytes consultados. Nasceu com o dashboard em Evidence, que expunha SQL livre;
+# o Farol só roda consultas fixas com cache, mas o teto fica como defesa extra. Sem faturamento não há custo, mas
 # esgotar 1 TiB/mês de cota grátis pararia o pipeline. Por conta: 10 GiB/dia; projeto: 30 GiB/dia
 # (~900 GiB/mês, abaixo de 1 TiB). O pipeline consulta poucos MB por dia.
 resource "google_service_usage_consumer_quota_override" "query_por_conta_dia" {

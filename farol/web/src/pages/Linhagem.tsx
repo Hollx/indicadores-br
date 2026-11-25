@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { ORDEM_CAMADAS, ROTULO_TIPO, useApi } from "../api";
 import { TituloTela } from "../componentes";
 import { Explica, Termo } from "../glossario";
+import { useTema } from "../tema";
 import type { Linhagem as TLinhagem } from "../tipos";
 
 const LARGURA_COLUNA = 270;
@@ -88,6 +89,7 @@ function posicionar(dados: TLinhagem): { nos: Node[]; arestas: Edge[] } {
 }
 
 export default function Linhagem() {
+  const { efetivo } = useTema();
   const { dados, erro, carregando } = useApi<TLinhagem>("/linhagem");
   const grafo = useMemo(() => (dados ? posicionar(dados) : null), [dados]);
 
@@ -113,7 +115,13 @@ export default function Linhagem() {
         </Explica>
       </TituloTela>
       <div className="grafo">
-        <ReactFlow nodes={grafo.nos} edges={grafo.arestas} fitView nodesConnectable={false}>
+        <ReactFlow
+          colorMode={efetivo === "escuro" ? "dark" : "light"}
+          nodes={grafo.nos}
+          edges={grafo.arestas}
+          fitView
+          nodesConnectable={false}
+        >
           <Background gap={20} />
           <Controls showInteractive={false} />
         </ReactFlow>

@@ -9,6 +9,6 @@ output "datasets" {
 }
 
 output "dashboard_service_account_email" {
-  description = "Service account do dashboard (Evidence), só leitura na Gold."
+  description = "Service account do Farol (antes o dashboard Evidence), só leitura na Gold."
   value       = google_service_account.dashboard.email
 }

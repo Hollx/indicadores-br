@@ -12,6 +12,13 @@
       rel="stylesheet"
     />
     <title>Farol · pipeline indicadores-br</title>
+    <script>
+      // Aplica o tema salvo antes de pintar a página, para não piscar o tema errado.
+      try {
+        var t = localStorage.getItem("farol-tema");
+        if (t === "claro" || t === "escuro") document.documentElement.setAttribute("data-tema", t);
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <div id="root"></div>

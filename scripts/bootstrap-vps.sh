@@ -25,7 +25,7 @@ if [[ "$(id -u)" -eq 0 ]]; then
   chown -R "${airflow_uid}:0" data logs dbt-artefatos
   chown "${airflow_uid}:0" secrets
   [[ -f secrets/sa.json ]] && chown "${airflow_uid}:0" secrets/sa.json
-  # O container do dashboard (imagem evidencedev/serve) roda como uid 10001.
+  # A API do Farol (farol/api/Dockerfile) roda como uid 10001.
   [[ -f secrets/sa-dashboard.json ]] && chown 10001:0 secrets/sa-dashboard.json
 else
   airflow_uid="$(id -u)"

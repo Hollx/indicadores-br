@@ -27,7 +27,8 @@ Todo dia o pipeline:
 O objetivo é praticar e demonstrar, num repositório público, a stack moderna de engenharia de dados: orquestração, transformação, qualidade de dados, infraestrutura como código, CI e visualização.
 
 - **Repositório:** https://github.com/Hollx/indicadores-br
-- **Dashboard:** https://indicadores.173-212-242-68.sslip.io
+- **Farol (monitoramento, governança, qualidade e visualização):** https://farol.173-212-242-68.sslip.io
+  (o endereço antigo do dashboard, `indicadores.173-212-242-68.sslip.io`, redireciona para cá)
 
 ---
 
@@ -333,6 +334,20 @@ O commit leva só o bloco do dashboard. As mudanças da Chagas nos mesmos arquiv
 - O **cron** de backup e healthcheck foi dispensado, porque o projeto vai sair desta VPS em breve.
 
 ---
+
+### Sessão de 25/11/2026: Farol e Boletim Focus
+
+- **Nova fonte:** expectativas de mercado do Boletim Focus (API Olinda do Banco Central) para IPCA e
+  IGP-M, com a Gold `fct_expectativa_vs_realizado` comparando a previsão com o realizado, de 0 a 12
+  meses de antecedência.
+- **Governança no dbt:** dono, camada, tags e descrição em todas as tabelas e colunas, e as telas do
+  Farol declaradas como `exposure`.
+- **Farol** (`farol/`, detalhes em `docs/FAROL.md`): API em FastAPI e telas em React + TypeScript com
+  gráficos SVG próprios. Mostra a rota do dado (situação de cada etapa), execuções do Airflow, testes
+  e frescor do dbt, catálogo, linhagem e os indicadores. Feito para ser entendido por quem não é da
+  área: cada tela abre com a resposta em uma frase e explica os termos técnicos.
+- **Evidence desligado:** o Farol passou a fazer a visualização com consultas fixas e cache, sem expor
+  SQL livre. A pasta `dashboard/` saiu do repositório.
 
 ## 8. Operação do dia a dia
 

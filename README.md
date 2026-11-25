@@ -20,7 +20,7 @@ API SGS do Banco Central + API Olinda (Boletim Focus), sem chave e sem custo
             silver.series_sgs (seed)
         │  dbt (tabelas)
         ▼
-  BigQuery  gold.fct_indicadores_mensais  ──▶  Evidence (dashboard em código, na VPS)
+  BigQuery  gold.fct_indicadores_mensais  ──▶  Farol (FastAPI + React, na VPS)
             gold.fct_expectativa_vs_realizado (o que o mercado esperava x o que aconteceu)
 
 Terraform: datasets bronze/silver/gold, service accounts e IAM mínimo
@@ -39,7 +39,7 @@ Shell: bootstrap da VPS, deploy, backup do banco do Airflow, healthcheck
 | Transformação e qualidade | dbt Core + dbt-bigquery | Grátis |
 | Infraestrutura | Terraform (provider google) | Grátis |
 | CI | GitHub Actions (repositório público) | Grátis |
-| Visualização | Evidence (`evidence serve` em Docker, páginas em Markdown + SQL) | Grátis (VPS própria) |
+| Monitoramento, governança e visualização | Farol: API em FastAPI e telas em React + TypeScript com gráficos próprios (`farol/`, ver `docs/FAROL.md`) | Grátis (VPS própria) |
 
 ### Limites do BigQuery sandbox (e como o projeto lida com eles)
 
@@ -67,7 +67,7 @@ Shell: bootstrap da VPS, deploy, backup do banco do Airflow, healthcheck
    cp terraform/terraform.tfvars.example terraform/terraform.tfvars   # preencha project_id
    make tf-init tf-plan tf-apply
    ./scripts/criar-chave-sa.sh             # gera secrets/sa.json para o Airflow
-   ./scripts/criar-chave-sa.sh dashboard   # gera secrets/sa-dashboard.json para o Evidence
+   ./scripts/criar-chave-sa.sh dashboard   # gera secrets/sa-dashboard.json para o Farol (só leitura na Gold)
    ```
 
 Os comandos `make tf-*` e o `criar-chave-sa.sh` sempre usam a configuração `pessoal` (troque com `GCLOUD_CONFIG=outra`), qualquer que seja a configuração ativa. Antes de rodar, `scripts/gcp-token.sh` confere que ela tem conta logada e aponta para o mesmo `project_id` do `terraform.tfvars`; se não, para com erro. O Terraform recebe só um token temporário (`GOOGLE_OAUTH_ACCESS_TOKEN`), então **não use** `gcloud auth application-default login`: essa credencial é global da máquina e não segue a configuração.
@@ -89,7 +89,7 @@ ssh -L 8080:127.0.0.1:8080 usuario@sua-vps
 # abra http://localhost:8080
 ```
 
-O dashboard (Evidence) fica em `127.0.0.1:3000` pelo mesmo túnel. Na VPS do autor ele é publicado com HTTPS pelo Caddy que já atende os outros serviços da máquina: `COMPOSE_FILE=docker-compose.yaml:docker-compose.vps.yaml` no `.env` liga o container à rede desse Caddy.
+O Farol fica em `127.0.0.1:3010` pelo mesmo túnel. Na VPS do autor ele é publicado com HTTPS pelo Caddy que já atende os outros serviços da máquina: `COMPOSE_FILE=docker-compose.yaml:docker-compose.vps.yaml` no `.env` liga o container à rede desse Caddy.
 
 Como a porta só existe dentro da VPS, o Airflow roda com o gerenciador de autenticação simples e todos os usuários como admin. **Não** exponha a porta 8080 publicamente sem antes configurar autenticação.
 
@@ -139,7 +139,7 @@ make databricks-upload databricks-deploy databricks-run
 
 ```
 airflow/          Dockerfile, DAG e código de extração/carga (testável sem Airflow)
-dashboard/        projeto Evidence: páginas em Markdown + SQL e conexão com o BigQuery
+farol/            Farol: API (FastAPI) e telas (React + TypeScript) de monitoramento, governança e visualização
 dbt/              projeto dbt: sources, modelos silver/gold, seed, testes
 spark/            fase 2: pacote PySpark (transformações, job local, job Databricks,
                   reconciliação) e testes; databricks.yml implanta o job serverless
@@ -155,13 +155,13 @@ tests/            testes unitários (pytest)
 - **Deduplicação na Silver:** `qualify row_number()` mantém a observação mais recente por série e data.
 - **Qualidade de dados no dbt:** testes `not_null`, `unique`, `relationships`, `accepted_values`, freshness da fonte e testes singulares (duplicidade, faixa plausível do IPCA).
 - **dbt num venv separado** dentro da imagem do Airflow, para não conflitar com as dependências do Airflow.
-- **Least privilege:** a service account do pipeline só tem `bigquery.jobUser` no projeto e `dataEditor` nos três datasets. A do dashboard tem `jobUser` e `dataViewer` só na Gold.
-- **Dashboard como código:** as páginas do Evidence (`dashboard/pages/*.md`) são Markdown com SQL do BigQuery, versionadas e revisadas como o resto do código. O `connection.yaml` não guarda segredo: a credencial vem de `GOOGLE_APPLICATION_CREDENTIALS`.
+- **Least privilege:** a service account do pipeline só tem `bigquery.jobUser` no projeto e `dataEditor` nos três datasets. A do Farol (`dashboard`) tem `jobUser` e `dataViewer` só na Gold.
+- **Visualização sem SQL livre:** o Farol só executa consultas fixas e parametrizadas na Gold, com cache e teto de bytes por consulta; o navegador nunca envia SQL. A credencial vem de `GOOGLE_APPLICATION_CREDENTIALS`.
 - **Arquivos do dbt fora do checkout:** `logs` e `target` vão para pastas graváveis pelo container (`DBT_LOG_PATH`, `DBT_TARGET_PATH`), porque o código montado na VPS é do root e o Airflow roda sem root.
 
 ## Próximos passos
 
-- [x] Dashboard em código (Evidence) sobre `gold.fct_indicadores_mensais`
+- [x] Farol: monitoramento, governança, qualidade e visualização (substituiu o dashboard em Evidence)
 - [ ] Mais fontes (IBGE SIDRA)
 - [x] Fase 2a: PySpark local refazendo Silver e Gold a partir de `data/raw/`, com testes no CI e reconciliação contra o dbt (61 meses, 0 divergências)
 - [ ] Carregar o Parquet do Spark no BigQuery e disparar o job Spark pelo Airflow
