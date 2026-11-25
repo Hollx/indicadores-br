@@ -22,6 +22,8 @@ export type Caso = {
   ferramentas: string[];
   /** Onde algo parecido pode ser visto funcionando no Farol. */
   noFarol?: { href: string; texto: string };
+  /** Época do caso, quando não é o cargo atual. */
+  fase?: string;
 };
 
 export type Cargo = {
@@ -167,6 +169,22 @@ export const CASOS: Caso[] = [
     ],
     resultado: "Relatórios gerados sob demanda a partir de consultas definidas em YAML.",
     ferramentas: ["FastAPI", "Python", "pandas", "BigQuery"],
+  },
+  {
+    id: "glpi",
+    fase: "Service Desk, onde comecei com dados",
+    titulo: "Inventário de computadores atualizado todo dia pela API do GLPI",
+    problema:
+      "Os dados de inventário dos computadores ficavam no GLPI e precisavam chegar consolidados a uma planilha para os relatórios gerenciais.",
+    feito: [
+      "Script em Google Apps Script que se autentica na API REST do GLPI e reaproveita a sessão por até 23 horas.",
+      "Busca todos os computadores em páginas e, para cada um, consulta em paralelo processador, memória, armazenamento e observações.",
+      "Traduz os códigos de tipo, status, grupo e localização em nomes, com cache de 6 horas para não repetir consultas.",
+      "Tenta de novo sozinho quando o servidor falha e diminui o tamanho da página quando a resposta vem grande demais.",
+      "Grava o resultado de uma vez numa planilha do Google Sheets com 13 colunas, numa execução agendada todos os dias.",
+    ],
+    resultado: "O inventário passou a chegar atualizado todo dia na planilha, sem extração manual.",
+    ferramentas: ["Google Apps Script", "JavaScript", "API REST", "GLPI", "Google Sheets"],
   },
   {
     id: "conhecimento",

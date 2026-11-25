@@ -1529,3 +1529,7 @@ p {
     gap: 2px;
   }
 }
+
+.caso-fase {
+  margin-bottom: 8px;
+}

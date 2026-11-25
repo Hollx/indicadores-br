@@ -8,6 +8,7 @@ function CasoLinha({ caso }: { caso: Caso }) {
   return (
     <article className="caso" aria-labelledby={`caso-${caso.id}`}>
       <div className="caso-cabeca">
+        {caso.fase && <span className="selo caso-fase">{caso.fase}</span>}
         <h3 id={`caso-${caso.id}`}>{caso.titulo}</h3>
         <p className="caso-problema">
           <strong>O desafio:</strong> {caso.problema}
