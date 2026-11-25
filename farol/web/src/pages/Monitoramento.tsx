@@ -6,6 +6,21 @@ import { useApi } from "../api";
 import GraficoBarras from "../graficos/GraficoBarras";
 import type { ExecucaoAirflow, TarefaAirflow } from "../tipos";
 
+const NOME_TAREFA: Record<string, string> = {
+  extrair: "Buscar as séries do Banco Central",
+  extrair_focus: "Buscar as previsões do Boletim Focus",
+  carregar: "Carregar as séries no BigQuery",
+  carregar_focus: "Carregar as previsões no BigQuery",
+  dbt_source_freshness: "Conferir se os dados estão em dia",
+  dbt_build: "Transformar e testar (dbt)",
+};
+
+const TIPO_EXECUCAO: Record<string, string> = {
+  scheduled: "agendada",
+  manual: "manual",
+  backfill: "reprocesso",
+};
+
 function Tarefas({ runId }: { runId: string }) {
   const { dados, erro, carregando } = useApi<TarefaAirflow[]>(
     `/monitoramento/execucoes/${encodeURIComponent(runId)}/tarefas`,
@@ -31,7 +46,7 @@ function Tarefas({ runId }: { runId: string }) {
           <tr>
             <th>Situação</th>
             <th>Tarefa</th>
-            <th className="num">Instâncias</th>
+            <th className="num">Partes</th>
             <th className="num">Tentativas</th>
             <th className="num">Duração</th>
             <th className="linha-tempo-col">Linha do tempo</th>
@@ -46,7 +61,10 @@ function Tarefas({ runId }: { runId: string }) {
                 <td>
                   <Status situacao={t.situacao} />
                 </td>
-                <td className="codigo">{t.tarefa}</td>
+                <td>
+                  {NOME_TAREFA[t.tarefa] ?? t.tarefa}
+                  <span className="tabela-sub codigo">{t.tarefa}</span>
+                </td>
                 <td className="num">{t.instancias}</td>
                 <td className="num">{t.tentativas}</td>
                 <td className="num">{duracao(t.duracao_s)}</td>
@@ -75,6 +93,7 @@ function Tarefas({ runId }: { runId: string }) {
 export default function Monitoramento() {
   const { dados, erro, carregando } = useApi<ExecucaoAirflow[]>("/monitoramento/execucoes?limite=20");
   const [selecionada, setSelecionada] = useState<string | null>(null);
+  const [todas, setTodas] = useState(false);
 
   if (carregando) return <p className="estado">Carregando…</p>;
 
@@ -123,29 +142,46 @@ export default function Monitoramento() {
                   : "?",
                 valor: r.duracao_s !== null ? r.duracao_s / 60 : null,
                 destaque: r.id === atual,
-                cor: r.situacao === "falha" ? "var(--falha)" : undefined,
+                cor:
+                  r.situacao === "falha"
+                    ? "var(--negative)"
+                    : r.id === atual
+                      ? "var(--chart-1)"
+                      : "var(--chart-cinza)",
                 dica: `${dataHora(r.inicio)}: ${r.estado}, ${duracao(r.duracao_s)}`,
               }))}
             />
           </Painel>
           <div className="grade-lista">
-            <Painel titulo="Execuções">
+            <Painel titulo="Execuções recentes">
               <ul className="lista">
-                {dados.map((r) => (
+                {(todas ? dados : dados.slice(0, 8)).map((r) => (
                   <li key={r.id}>
                     <button
                       className={r.id === atual ? "ativo" : undefined}
                       onClick={() => setSelecionada(r.id)}
                     >
                       <Status situacao={r.situacao} />
-                      <span className="lista-nome">{dataHora(r.inicio ?? r.agendada_para)}</span>
-                      <span className="lista-tipo">{r.tipo}</span>
+                      <span className="lista-nome">{quando(r.inicio ?? r.agendada_para)}</span>
+                      <span className="lista-tipo">{TIPO_EXECUCAO[r.tipo ?? ""] ?? r.tipo}</span>
                     </button>
                   </li>
                 ))}
               </ul>
+              {dados.length > 8 && (
+                <button
+                  className="botao-secundario"
+                  onClick={() => setTodas((v) => !v)}
+                  aria-expanded={todas}
+                >
+                  {todas ? "Mostrar menos" : `Ver as ${dados.length} execuções`}
+                </button>
+              )}
             </Painel>
-            <Painel titulo="Tarefas da execução">
+            <Painel
+              titulo="O que aconteceu nessa execução"
+              descricao="Cada tarefa, quanto tempo levou e se precisou ser repetida."
+            >
               {atual ? <Tarefas runId={atual} /> : <p className="estado">Nenhuma execução.</p>}
             </Painel>
           </div>

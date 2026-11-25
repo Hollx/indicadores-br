@@ -18,7 +18,7 @@ const MARGEM = { topo: 18, direita: 12, baixo: 34, esquerda: 48 };
 export default function GraficoBarras({
   barras,
   altura = 240,
-  cor = "var(--serie-1)",
+  cor = "var(--chart-1)",
   unidade = "",
   casas = 2,
   rotuloX,

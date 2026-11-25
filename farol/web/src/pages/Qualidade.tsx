@@ -209,7 +209,7 @@ function Historico() {
   const ordem = [...dados].reverse();
   return (
     <GraficoBarras
-      cor="var(--falha)"
+      cor="var(--negative)"
       casas={0}
       rotuloX="testes com falha por execução"
       barras={ordem.map((e) => ({
