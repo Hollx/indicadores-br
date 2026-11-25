@@ -10,13 +10,16 @@ import {
   IconeInicio,
   IconeLinhagem,
   IconeMenu,
+  IconePessoa,
   IconeAuto,
   IconeLua,
   IconeQualidade,
   IconeSol,
 } from "./icones";
+import { AUTOR } from "./conteudo/autor";
 import { MarcaFarol } from "./marca";
 import Catalogo from "./pages/Catalogo";
+import Experiencia from "./pages/Experiencia";
 import Indicadores from "./pages/Indicadores";
 import Linhagem from "./pages/Linhagem";
 import Monitoramento from "./pages/Monitoramento";
@@ -55,6 +58,7 @@ type Pagina = {
 
 const PAGINAS = {
   inicio: { titulo: "Visão geral", grupo: "Comece aqui", icone: IconeInicio, componente: VisaoGeral },
+  experiencia: { titulo: "Experiência", grupo: "Comece aqui", icone: IconePessoa, componente: Experiencia },
   indicadores: {
     titulo: "Indicadores",
     grupo: "O que os dados dizem",
@@ -172,6 +176,9 @@ export default function App() {
           ))}
         </nav>
         <div className="lateral-pe">
+          <span>
+            Feito por <a href="#/experiencia">{AUTOR.nome}</a>
+          </span>
           <a href={REPOSITORIO} target="_blank" rel="noreferrer">
             Código no GitHub <IconeExterno />
           </a>

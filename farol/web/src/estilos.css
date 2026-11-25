@@ -1375,3 +1375,157 @@ p {
     display: none;
   }
 }
+
+/* --- portfólio: quem fez e experiência ------------------------------------------------------ */
+
+.quem-fez {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  margin-top: var(--gap);
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+.quem-fez-iniciais {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--pill-info-bg);
+  color: var(--pill-info-ink);
+  font-weight: 600;
+}
+.quem-fez-frase {
+  color: var(--muted);
+  max-width: 80ch;
+}
+.quem-fez-links {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-weight: 500;
+}
+.quem-fez-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.botao-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 0;
+  text-decoration: none;
+}
+.trajetoria {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+.trajetoria li {
+  display: grid;
+  grid-template-columns: 130px minmax(0, 1fr);
+  gap: 16px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--rule);
+}
+.trajetoria li:last-child {
+  border-bottom: none;
+}
+.trajetoria-periodo {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.trajetoria-empresa {
+  color: var(--muted);
+}
+.trajetoria p {
+  margin-top: 4px;
+  color: var(--muted);
+}
+.casos {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+.caso {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: var(--gap);
+  padding: 20px;
+  border-bottom: 1px solid var(--rule);
+}
+.caso:last-child {
+  border-bottom: none;
+}
+.caso h3 {
+  font-size: 16px;
+}
+.caso-problema {
+  margin-top: 8px;
+  color: var(--muted);
+}
+.caso-problema strong {
+  color: var(--text);
+  font-weight: 500;
+}
+.caso-ferramentas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.caso-ferramentas .selo {
+  margin: 0;
+}
+.caso-corpo h4 {
+  margin: 0 0 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.caso-corpo h4:not(:first-child) {
+  margin-top: 12px;
+}
+.caso-corpo ul {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.caso-farol {
+  display: inline-block;
+  margin-top: 12px;
+  font-weight: 500;
+}
+.formacao {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+@media (max-width: 860px) {
+  .quem-fez {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .quem-fez-links {
+    grid-column: 1 / -1;
+  }
+  .caso {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .trajetoria li {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+}

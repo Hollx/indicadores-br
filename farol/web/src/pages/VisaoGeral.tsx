@@ -1,6 +1,7 @@
 import { REPOSITORIO } from "../App";
 import { useApi } from "../api";
 import { Cartao, Indisponivel, Status, TituloTela, duracao, quando } from "../componentes";
+import { QuemFez } from "../componentes-autor";
 import { Explica, Termo } from "../glossario";
 import { data, formatarNumero, rotuloMes } from "../graficos/escalas";
 import type { Etapa, ExecucaoDbt, LinhaIndicadores, PainelEtapas, Resumo } from "../tipos";
@@ -221,6 +222,8 @@ export default function VisaoGeral() {
           </p>
         </Explica>
       </TituloTela>
+
+      <QuemFez />
 
       <section className="secao" aria-labelledby="rota-titulo">
         <div className="secao-topo">
