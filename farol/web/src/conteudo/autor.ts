@@ -138,7 +138,7 @@ export const CASOS: Caso[] = [
   },
   {
     id: "ci-views",
-    titulo: "Deploy seguro de views no BigQuery (prova de conceito)",
+    titulo: "CI/CD para views no BigQuery",
     problema:
       "Publicar mudanças em views do BigQuery sem quebrar o schema nem aumentar o custo das consultas.",
     feito: [
@@ -147,9 +147,12 @@ export const CASOS: Caso[] = [
       "Backup de cada definição por 90 dias, restauração automática se a conferência falha e publicação na ordem bronze, silver e gold.",
     ],
     resultado:
-      "Prova de conceito funcionando: a pipeline validou e publicou views de verdade. O próximo passo é cobrir todos os datasets.",
+      "Nos testes, a pipeline validou e publicou views de verdade, com as travas e o rollback funcionando.",
     ferramentas: ["GitLab CI", "BigQuery", "Workload Identity Federation"],
-    noFarol: { href: "#/execucoes", texto: "Execuções verificadas e monitoradas, como no Farol" },
+    noFarol: {
+      href: "https://github.com/Hollx/indicadores-br/actions",
+      texto: "O próprio Farol tem CI/CD: testes e deploy automático a cada mudança",
+    },
   },
   {
     id: "governanca",

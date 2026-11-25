@@ -31,7 +31,11 @@ function CasoLinha({ caso }: { caso: Caso }) {
         <h4>Resultado</h4>
         <p>{caso.resultado}</p>
         {caso.noFarol && (
-          <a className="caso-farol" href={caso.noFarol.href}>
+          <a
+            className="caso-farol"
+            href={caso.noFarol.href}
+            {...(caso.noFarol.href.startsWith("http") ? { target: "_blank", rel: "noreferrer" } : {})}
+          >
             {caso.noFarol.texto} →
           </a>
         )}
