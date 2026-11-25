@@ -2,13 +2,26 @@ version: 2
 
 seeds:
   - name: series_sgs
-    description: Catálogo das séries SGS ingeridas.
+    description: Catálogo das séries SGS ingeridas. Fonte única de nome, unidade e periodicidade.
+    config:
+      tags: ["silver", "catalogo"]
+      meta:
+        dono: Hollx
+        camada: silver
     columns:
       - name: serie_id
+        description: Código da série no SGS.
         data_tests:
           - unique
           - not_null
+      - name: nome_serie
+        description: Nome curto usado nos modelos (ex. selic_meta, ipca_mensal).
+      - name: descricao
+        description: Descrição legível da série.
+      - name: unidade
+        description: Unidade do valor (ex. % a.a., % a.m., R$).
       - name: periodicidade
+        description: Frequência de publicação da série.
         data_tests:
           - accepted_values:
               arguments:
@@ -17,8 +30,15 @@ seeds:
 models:
   - name: stg_sgs__observacoes
     description: Observações do SGS tipadas e deduplicadas (uma linha por série e data).
+    config:
+      tags: ["silver", "sgs"]
+      meta:
+        dono: Hollx
+        camada: silver
+        grao: uma linha por série e data de referência
     columns:
       - name: serie_id
+        description: Código da série no SGS.
         data_tests:
           - not_null
           - relationships:
@@ -29,10 +49,17 @@ models:
         description: Nulo indica série ingerida sem cadastro no seed.
         data_tests:
           - not_null
+      - name: unidade
+        description: Unidade do valor, vinda do seed series_sgs.
+      - name: periodicidade
+        description: Frequência da série, vinda do seed series_sgs.
       - name: data_referencia
+        description: Data a que o valor se refere.
         data_tests:
           - not_null
       - name: valor
         description: Nulo indica valor que não pôde ser convertido para número.
         data_tests:
           - not_null
+      - name: ingerido_em
+        description: Momento (UTC) da ingestão mais recente desta observação.

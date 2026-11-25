@@ -5,11 +5,39 @@ models:
     description: >
       Indicadores econômicos por mês (Selic meta média, dólar médio, IPCA e IGP-M mensais,
       IPCA acumulado em 12 meses). Fonte do dashboard em Evidence (dashboard/).
+    config:
+      tags: ["gold", "indicadores"]
+      meta:
+        dono: Hollx
+        camada: gold
+        grao: uma linha por mês
+        consumidores: dashboard Evidence
     columns:
       - name: mes
         description: Primeiro dia do mês.
         data_tests:
           - unique
           - not_null
+      - name: selic_meta_media
+        description: Média diária da meta Selic no mês, em % a.a.
+      - name: dolar_compra_medio
+        description: Média diária do dólar comercial (taxa de câmbio livre, compra) no mês, em R$/US$.
+      - name: ipca_mensal
+        description: Variação do IPCA no mês, em %.
+      - name: igpm_mensal
+        description: Variação do IGP-M no mês, em %.
       - name: ipca_acumulado_12m
         description: Nulo enquanto a janela não tem 12 meses de IPCA.
+
+exposures:
+  - name: dashboard_indicadores
+    label: Dashboard de indicadores (Evidence)
+    type: dashboard
+    maturity: high
+    description: Dashboard público com Selic, IPCA, IGP-M, dólar e juro real, lido da camada Gold.
+    depends_on:
+      - ref('fct_indicadores_mensais')
+    owner:
+      name: Hollx
+    config:
+      tags: ["visualizacao"]

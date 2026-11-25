@@ -3,6 +3,13 @@ version: 2
 sources:
   - name: bronze
     description: Dados brutos do SGS (Banco Central), carregados pelo Airflow.
+    config:
+      tags: ["bronze", "sgs"]
+      meta:
+        dono: Hollx
+        camada: bronze
+        origem: API SGS do Banco Central (pública, sem chave)
+        atualizacao: diária, 09:00 UTC (DAG indicadores_br)
     database: "{{ env_var('GCP_PROJECT_ID') }}"
     schema: bronze
     tables:
@@ -15,11 +22,16 @@ sources:
             error_after: {count: 50, period: hour}
         columns:
           - name: serie_id
+            description: Código da série no SGS (ex. 432 = Selic meta).
             data_tests:
               - not_null
           - name: data_referencia
+            description: Data a que o valor se refere, como publicada pelo Banco Central.
             data_tests:
               - not_null
+          - name: valor_texto
+            description: Valor como texto, exatamente como veio da API (vírgula decimal possível).
           - name: ingerido_em
+            description: Momento (UTC) em que o Airflow baixou a série. Base do teste de frescor.
             data_tests:
               - not_null
