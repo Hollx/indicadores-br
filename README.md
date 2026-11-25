@@ -1,25 +1,27 @@
 # indicadores-br
 
-Pipeline de dados de ponta a ponta com indicadores econômicos públicos do Brasil (Selic, IPCA, IGP-M e dólar), construído com **custo zero**.
+Pipeline de dados de ponta a ponta com indicadores econômicos públicos do Brasil (Selic, IPCA, IGP-M e dólar) e as expectativas do mercado para eles (Boletim Focus), construído com **custo zero**.
 
 O objetivo é praticar e demonstrar, num repositório público, a stack moderna de engenharia de dados: **Airflow** para orquestração, **dbt** para transformação e testes de qualidade, **Terraform** para infraestrutura como código, **BigQuery** como warehouse em arquitetura **Medallion** (Bronze/Silver/Gold), **shell script** para operação da VPS e **GitHub Actions** para CI.
 
 ## Arquitetura
 
 ```
-API SGS do Banco Central (sem chave, sem custo)
+API SGS do Banco Central + API Olinda (Boletim Focus), sem chave e sem custo
         │
         ▼  Airflow 3 (Docker Compose na VPS), execução diária
   data/raw/ (NDJSON particionado por data, histórico na VPS)
         │  load job (gratuito)
         ▼
-  BigQuery  bronze.sgs_observacoes
+  BigQuery  bronze.sgs_observacoes  +  bronze.focus_expectativas_mensais
         │  dbt (views)
         ▼
-  BigQuery  silver.stg_sgs__observacoes  +  silver.series_sgs (seed)
+  BigQuery  silver.stg_sgs__observacoes  +  silver.stg_focus__expectativas_mensais
+            silver.series_sgs (seed)
         │  dbt (tabelas)
         ▼
   BigQuery  gold.fct_indicadores_mensais  ──▶  Evidence (dashboard em código, na VPS)
+            gold.fct_expectativa_vs_realizado (o que o mercado esperava x o que aconteceu)
 
 Terraform: datasets bronze/silver/gold, service accounts e IAM mínimo
 GitHub Actions: lint e testes Python, shellcheck, terraform validate, dbt parse
@@ -30,7 +32,7 @@ Shell: bootstrap da VPS, deploy, backup do banco do Airflow, healthcheck
 
 | Peça | Ferramenta | Custo |
 |---|---|---|
-| Fonte | API SGS do Banco Central | Grátis |
+| Fontes | API SGS e API Olinda (Expectativas de Mercado) do Banco Central | Grátis |
 | Orquestração | Apache Airflow 3 (LocalExecutor) em Docker Compose | Grátis (VPS própria) |
 | Data lake bruto | Arquivos NDJSON na VPS (`data/raw/`) | Grátis |
 | Warehouse | BigQuery **sandbox** (sem cartão de crédito) | Grátis |

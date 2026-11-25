@@ -35,3 +35,53 @@ sources:
             description: Momento (UTC) em que o Airflow baixou a série. Base do teste de frescor.
             data_tests:
               - not_null
+
+      - name: focus_expectativas_mensais
+        description: >
+          Expectativas mensais do Boletim Focus (IPCA e IGP-M), uma linha por data de
+          pesquisa e mês-alvo. Estatísticas sobre os respondentes dos últimos 30 dias.
+        config:
+          loaded_at_field: ingerido_em
+          freshness:
+            warn_after: {count: 26, period: hour}
+            error_after: {count: 50, period: hour}
+          tags: ["bronze", "focus"]
+          meta:
+            dono: Hollx
+            camada: bronze
+            origem: API Olinda do Banco Central, Expectativas de Mercado (pública, sem chave)
+            atualizacao: diária, 09:00 UTC (DAG indicadores_br)
+        columns:
+          - name: indicador
+            description: Indicador no Focus (IPCA ou IGP-M).
+            data_tests:
+              - not_null
+              - accepted_values:
+                  arguments:
+                    values: ["IPCA", "IGP-M"]
+          - name: data_pesquisa
+            description: Data em que a estatística foi calculada pelo Banco Central.
+            data_tests:
+              - not_null
+          - name: mes_referencia
+            description: Primeiro dia do mês que a projeção tenta prever.
+            data_tests:
+              - not_null
+          - name: media
+            description: Média das projeções, em % no mês.
+          - name: mediana
+            description: Mediana das projeções, em % no mês. É o número publicado no boletim.
+          - name: desvio_padrao
+            description: Desvio padrão das projeções.
+          - name: minimo
+            description: Menor projeção entre os respondentes.
+          - name: maximo
+            description: Maior projeção entre os respondentes.
+          - name: respondentes
+            description: Quantas instituições entraram no cálculo.
+          - name: base_calculo
+            description: 0 = respondentes dos últimos 30 dias (série do boletim).
+          - name: ingerido_em
+            description: Momento (UTC) em que o Airflow baixou os dados. Base do teste de frescor.
+            data_tests:
+              - not_null

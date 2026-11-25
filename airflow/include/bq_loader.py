@@ -10,6 +10,7 @@ import tempfile
 from pathlib import Path
 
 TABELA_BRONZE = "bronze.sgs_observacoes"
+TABELA_FOCUS = "bronze.focus_expectativas_mensais"
 
 
 def _schema():
@@ -19,6 +20,24 @@ def _schema():
         bigquery.SchemaField("serie_id", "INTEGER", mode="REQUIRED"),
         bigquery.SchemaField("data_referencia", "DATE", mode="REQUIRED"),
         bigquery.SchemaField("valor_texto", "STRING"),
+        bigquery.SchemaField("ingerido_em", "TIMESTAMP", mode="REQUIRED"),
+    ]
+
+
+def _schema_focus():
+    from google.cloud import bigquery
+
+    return [
+        bigquery.SchemaField("indicador", "STRING", mode="REQUIRED"),
+        bigquery.SchemaField("data_pesquisa", "DATE", mode="REQUIRED"),
+        bigquery.SchemaField("mes_referencia", "DATE", mode="REQUIRED"),
+        bigquery.SchemaField("media", "FLOAT"),
+        bigquery.SchemaField("mediana", "FLOAT"),
+        bigquery.SchemaField("desvio_padrao", "FLOAT"),
+        bigquery.SchemaField("minimo", "FLOAT"),
+        bigquery.SchemaField("maximo", "FLOAT"),
+        bigquery.SchemaField("respondentes", "INTEGER"),
+        bigquery.SchemaField("base_calculo", "INTEGER"),
         bigquery.SchemaField("ingerido_em", "TIMESTAMP", mode="REQUIRED"),
     ]
 
@@ -37,7 +56,16 @@ def concatenar(arquivos: list[Path], destino: Path) -> int:
 
 
 def carregar_bronze(arquivos: list[str], projeto: str, location: str) -> int:
-    """Substitui a tabela Bronze pelo conteúdo dos arquivos. Retorna as linhas carregadas."""
+    """Substitui a Bronze do SGS pelo conteúdo dos arquivos. Retorna as linhas carregadas."""
+    return _carregar(arquivos, projeto, location, TABELA_BRONZE, _schema())
+
+
+def carregar_focus(arquivos: list[str], projeto: str, location: str) -> int:
+    """Substitui a Bronze do Focus pelo conteúdo dos arquivos. Retorna as linhas carregadas."""
+    return _carregar(arquivos, projeto, location, TABELA_FOCUS, _schema_focus())
+
+
+def _carregar(arquivos: list[str], projeto: str, location: str, tabela: str, schema) -> int:
     from google.cloud import bigquery
 
     if not arquivos:
@@ -46,7 +74,7 @@ def carregar_bronze(arquivos: list[str], projeto: str, location: str) -> int:
     client = bigquery.Client(project=projeto, location=location)
     job_config = bigquery.LoadJobConfig(
         source_format=bigquery.SourceFormat.NEWLINE_DELIMITED_JSON,
-        schema=_schema(),
+        schema=schema,
         write_disposition=bigquery.WriteDisposition.WRITE_TRUNCATE,
     )
 
@@ -57,7 +85,7 @@ def carregar_bronze(arquivos: list[str], projeto: str, location: str) -> int:
             raise ValueError("arquivos vazios: nada a carregar")
         with combinado.open("rb") as fonte:
             job = client.load_table_from_file(
-                fonte, f"{projeto}.{TABELA_BRONZE}", job_config=job_config
+                fonte, f"{projeto}.{tabela}", job_config=job_config
             )
         job.result()
 

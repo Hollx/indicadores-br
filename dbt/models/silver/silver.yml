@@ -63,3 +63,55 @@ models:
           - not_null
       - name: ingerido_em
         description: Momento (UTC) da ingestão mais recente desta observação.
+
+  - name: stg_focus__expectativas_mensais
+    description: Expectativas mensais do Focus deduplicadas, com horizonte da projeção em meses.
+    config:
+      tags: ["silver", "focus"]
+      meta:
+        dono: Hollx
+        camada: silver
+        grao: uma linha por indicador, data de pesquisa e mês-alvo
+    data_tests:
+      - combinacao_unica:
+          arguments:
+            colunas: ["indicador", "data_pesquisa", "mes_referencia"]
+    columns:
+      - name: indicador
+        description: Indicador no Focus (IPCA ou IGP-M).
+        data_tests:
+          - not_null
+      - name: nome_serie
+        description: Série realizada correspondente no seed series_sgs.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('series_sgs')
+                field: nome_serie
+      - name: data_pesquisa
+        description: Data em que a estatística foi calculada.
+        data_tests:
+          - not_null
+      - name: mes_referencia
+        description: Primeiro dia do mês-alvo da projeção.
+        data_tests:
+          - not_null
+      - name: horizonte_meses
+        description: Meses entre a pesquisa e o mês-alvo (0 = pesquisa no próprio mês).
+        data_tests:
+          - not_null
+      - name: mediana
+        description: Mediana das projeções, em % no mês.
+      - name: media
+        description: Média das projeções, em % no mês.
+      - name: desvio_padrao
+        description: Desvio padrão das projeções.
+      - name: minimo
+        description: Menor projeção.
+      - name: maximo
+        description: Maior projeção.
+      - name: respondentes
+        description: Instituições que entraram no cálculo.
+      - name: ingerido_em
+        description: Momento (UTC) da ingestão mais recente desta linha.
