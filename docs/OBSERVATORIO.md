@@ -46,8 +46,32 @@ Evidence (exposure) ─┘
 5. **Painel de etapas.** A tela-resumo do pipeline.
 6. **Deploy e documentação.** Docker Compose, CI (lint, testes, build do front), README e guia.
 
+## Como rodar localmente
+
+```bash
+# API (lê os artefatos do dbt; rode `dbt parse` ou `dbt build` antes)
+cd observatorio/api
+python3 -m venv .venv && .venv/bin/pip install -r requirements-dev.txt
+DBT_ARTEFATOS_DIR=../../dbt/target .venv/bin/uvicorn observatorio_api.main:app --port 8010
+
+# Web (outro terminal): http://localhost:5173
+cd observatorio/web
+npm ci && npm run dev
+```
+
+Testes: `cd observatorio/api && .venv/bin/pytest -q` · build do front: `npm run build`.
+
+## Andamento
+
+- [x] Fase 1: governança no dbt
+- [x] Fase 2: API de catálogo, linhagem e cobertura
+- [x] Fase 3: telas de Governança, Catálogo e Linhagem
+- [ ] Fase 4: qualidade e monitoramento
+- [ ] Fase 5: painel de etapas
+- [ ] Fase 6: deploy, CI e documentação final
+
 ## Regras do projeto
 
 - Código escrito do zero. Nenhum arquivo, trecho, nome ou texto vem de projetos de trabalho.
-- Só dados públicos (API SGS do Banco Central).
+- Só dados públicos (APIs SGS e Olinda do Banco Central).
 - Tudo somente leitura em relação ao pipeline: o Observatório observa, não executa.

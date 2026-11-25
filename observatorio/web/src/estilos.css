@@ -1,0 +1,131 @@
+:root {
+  --fundo: #f6f7f9;
+  --superficie: #ffffff;
+  --borda: #e2e5ea;
+  --texto: #1b1f24;
+  --suave: #5c6570;
+  --destaque: #2f6fdf;
+  --erro: #c2352b;
+  --bronze: #a8682a;
+  --silver: #6b7685;
+  --gold: #b88a00;
+  --fonte: #3a7d5c;
+  --consumo: #7b4fc9;
+  color-scheme: light;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fundo: #111418;
+    --superficie: #1a1e24;
+    --borda: #2b313a;
+    --texto: #e6e9ee;
+    --suave: #9aa3ae;
+    --destaque: #6c9cf0;
+    --erro: #ef7a70;
+    --bronze: #d4935a;
+    --silver: #a6b0bd;
+    --gold: #e0b93a;
+    --fonte: #6cc49a;
+    --consumo: #a98ae6;
+    color-scheme: dark;
+  }
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--fundo); color: var(--texto); }
+h1 { font-size: 1.5rem; margin: 0 0 0.25rem; }
+h2 { font-size: 1.1rem; margin: 1.75rem 0 0.75rem; }
+
+.topo {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+  padding: 0.75rem 1.5rem; background: var(--superficie); border-bottom: 1px solid var(--borda);
+}
+.marca { display: flex; align-items: center; gap: 0.6rem; }
+.marca small { display: block; color: var(--suave); font-size: 0.75rem; }
+.marca-ponto { width: 12px; height: 12px; border-radius: 50%; background: var(--destaque); }
+nav { display: flex; gap: 0.25rem; }
+nav a {
+  padding: 0.45rem 0.8rem; border-radius: 6px; color: var(--suave); text-decoration: none; font-size: 0.9rem;
+}
+nav a:hover { background: var(--fundo); color: var(--texto); }
+nav a.ativo { background: var(--fundo); color: var(--texto); font-weight: 600; }
+
+main { max-width: 1200px; margin: 0 auto; padding: 1.5rem; }
+.subtitulo { color: var(--suave); margin: 0 0 1.25rem; max-width: 70ch; }
+.estado { color: var(--suave); }
+.estado.erro { color: var(--erro); }
+
+.cartoes { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; }
+.cartao {
+  display: flex; flex-direction: column; gap: 0.2rem; padding: 1rem;
+  background: var(--superficie); border: 1px solid var(--borda); border-radius: 8px;
+}
+.cartao-rotulo { color: var(--suave); font-size: 0.8rem; }
+.cartao-valor { font-size: 1.6rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.cartao-detalhe { color: var(--suave); font-size: 0.8rem; }
+
+.tabela { width: 100%; border-collapse: collapse; background: var(--superficie); border: 1px solid var(--borda); border-radius: 8px; overflow: hidden; }
+.tabela th, .tabela td { padding: 0.55rem 0.75rem; border-bottom: 1px solid var(--borda); text-align: left; font-size: 0.88rem; vertical-align: top; }
+.tabela th { color: var(--suave); font-weight: 500; font-size: 0.8rem; }
+.tabela tr:last-child td { border-bottom: none; }
+.num { text-align: right !important; font-variant-numeric: tabular-nums; }
+.codigo { font-family: ui-monospace, "SFMono-Regular", Menlo, monospace; font-size: 0.82rem; }
+
+.barra-linha { display: flex; align-items: center; gap: 0.6rem; }
+.barra { flex: 1; height: 8px; background: var(--fundo); border-radius: 4px; overflow: hidden; min-width: 80px; }
+.barra-preenchida { height: 100%; background: var(--destaque); }
+
+.selo {
+  display: inline-block; padding: 0.1rem 0.45rem; margin-right: 0.3rem; border-radius: 4px;
+  font-size: 0.72rem; font-weight: 600; border: 1px solid currentColor; text-transform: lowercase;
+}
+.selo.neutro { color: var(--suave); }
+.selo.teste { color: var(--destaque); font-weight: 500; }
+.camada-fonte { color: var(--fonte); }
+.camada-bronze { color: var(--bronze); }
+.camada-silver { color: var(--silver); }
+.camada-gold { color: var(--gold); }
+.camada-consumo { color: var(--consumo); }
+
+.filtros { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.filtros input, .filtros select {
+  padding: 0.5rem 0.7rem; border: 1px solid var(--borda); border-radius: 6px;
+  background: var(--superficie); color: var(--texto); font: inherit; font-size: 0.9rem;
+}
+.filtros input { flex: 1; min-width: 220px; }
+
+.catalogo { display: grid; grid-template-columns: 280px 1fr; gap: 1rem; align-items: start; }
+@media (max-width: 760px) { .catalogo { grid-template-columns: 1fr; } }
+.lista { list-style: none; margin: 0; padding: 0.35rem; background: var(--superficie); border: 1px solid var(--borda); border-radius: 8px; }
+.lista button {
+  display: flex; align-items: center; gap: 0.5rem; width: 100%; padding: 0.5rem 0.6rem;
+  border: none; border-radius: 6px; background: none; color: var(--texto); font: inherit; font-size: 0.88rem; text-align: left; cursor: pointer;
+}
+.lista button:hover { background: var(--fundo); }
+.lista button.ativo { background: var(--fundo); font-weight: 600; }
+.lista-nome { flex: 1; overflow-wrap: anywhere; }
+.lista-tipo { color: var(--suave); font-size: 0.75rem; }
+.ponto { width: 8px; height: 8px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+.vazio { color: var(--suave); font-style: italic; padding: 0.5rem; }
+
+.detalhe { padding: 1.25rem; background: var(--superficie); border: 1px solid var(--borda); border-radius: 8px; }
+.detalhe h2 { margin: 0.6rem 0 0.3rem; overflow-wrap: anywhere; }
+.detalhe header p { margin: 0 0 1rem; color: var(--suave); }
+.ficha { display: grid; grid-template-columns: max-content 1fr; gap: 0.35rem 1rem; margin: 0 0 1.25rem; font-size: 0.88rem; }
+.ficha-linha { display: contents; }
+.ficha dt { color: var(--suave); }
+.ficha dd { margin: 0; }
+.nota { color: var(--suave); font-size: 0.85rem; }
+
+.grafo { height: 560px; background: var(--superficie); border: 1px solid var(--borda); border-radius: 8px; }
+.no { background: var(--superficie) !important; color: var(--texto) !important; border: 1px solid var(--borda) !important; border-left-width: 4px !important; width: 210px !important; }
+.camada-borda-fonte { border-left-color: var(--fonte) !important; }
+.camada-borda-bronze { border-left-color: var(--bronze) !important; }
+.camada-borda-silver { border-left-color: var(--silver) !important; }
+.camada-borda-gold { border-left-color: var(--gold) !important; }
+.camada-borda-consumo { border-left-color: var(--consumo) !important; }
+.no-linhagem { display: flex; flex-direction: column; align-items: flex-start; gap: 0.2rem; text-align: left; }
+.no-linhagem strong { font-size: 0.8rem; overflow-wrap: anywhere; }
+.no-linhagem small { color: var(--suave); font-size: 0.7rem; }
