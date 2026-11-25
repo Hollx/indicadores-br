@@ -32,3 +32,6 @@ metastore_db/
 derby.log
 .databricks/
 spark/dist/
+
+# artefatos locais da skill de design
+.taste-skill/

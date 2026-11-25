@@ -22,14 +22,41 @@ ESTADO_PT = {
 }
 
 
+# Nome de cada tarefa do DAG em linguagem simples, para o painel público.
+NOME_TAREFA = {
+    "extrair": "Séries do Banco Central",
+    "extrair_focus": "Previsões do Boletim Focus",
+    "carregar": "Carga das séries",
+    "carregar_focus": "Carga das previsões",
+    "dbt_source_freshness": "Conferência de prazo",
+    "dbt_build": "Transformação e testes",
+}
+
+NOME_FONTE = {
+    "bronze.sgs_observacoes": "Séries do Banco Central",
+    "bronze.focus_expectativas_mensais": "Previsões do Focus",
+}
+
+
+def ha_quanto(horas: float | None) -> str:
+    if horas is None:
+        return "sem registro"
+    if horas < 1:
+        return f"há {max(1, round(horas * 60))} min"
+    if horas < 48:
+        return f"há {round(horas)} h"
+    return f"há {round(horas / 24)} dias"
+
+
 def _resumo_tarefa(tarefa: dict[str, Any]) -> str:
-    """'extrair: 4/4 ok' ou 'extrair_focus: 1/2 ok, 1 falha'."""
+    """'Séries do Banco Central: 4 de 4 ok' ou '...: 1 de 2 ok, 1 falha'."""
     estados = tarefa["estados"]
     ok = estados.get("success", 0)
     outros = [f"{n} {ESTADO_PT.get(e, e)}" for e, n in estados.items() if e != "success"]
-    texto = f"{tarefa['tarefa']}: {ok}/{tarefa['instancias']} ok"
+    nome = NOME_TAREFA.get(tarefa["tarefa"], tarefa["tarefa"])
+    texto = f"{nome}: {ok} de {tarefa['instancias']} ok"
     if tarefa.get("tentativas", 0) > 1:
-        outros.append(f"até {tarefa['tentativas']} tentativas")
+        outros.append("com nova tentativa")
     return f"{texto}, {', '.join(outros)}" if outros else texto
 
 
@@ -109,7 +136,8 @@ def montar_etapas(
             for fonte in frescor["fontes"]:
                 situacoes.append(fonte["situacao"])
                 horas = fonte.get("horas_desde_ultimo_dado") or fonte["atraso_horas"]
-                detalhes.append(f"{fonte['nome']}: último dado há {horas} h")
+                nome = NOME_FONTE.get(fonte["nome"], fonte["nome"])
+                detalhes.append(f"{nome}: último dado {ha_quanto(horas)}")
 
         if definicao.get("camada") and execucao_dbt:
             nos = [
@@ -121,16 +149,15 @@ def montar_etapas(
             if nos:
                 falhas = [n["nome"] for n in testes if n["situacao"] in ("falha", "aviso")]
                 tabelas = "tabela construída" if len(modelos) == 1 else "tabelas construídas"
-                detalhes.append(
-                    f"{len(modelos)} {tabelas}, {len(testes) - len(falhas)}/{len(testes)} testes ok"
-                )
+                detalhes.append(f"{len(modelos)} {tabelas}")
+                detalhes.append(f"{len(testes) - len(falhas)} de {len(testes)} testes ok")
                 detalhes.extend(f"teste com problema: {nome}" for nome in falhas)
 
         if definicao["id"] == "visualizacao":
             exposicoes = [r for r in catalogo if r["tipo"] == "exposure"]
             gold = next((e for e in etapas if e["id"] == "gold"), None)
             situacoes.append(gold["situacao"] if gold else "sem_dados")
-            detalhes.extend(f"exposição: {r['nome']}" for r in exposicoes)
+            detalhes.extend(r["nome"] for r in exposicoes)
 
         etapas.append(
             {

@@ -203,7 +203,7 @@ def test_etapas_juntam_airflow_e_dbt(run_results, manifest):
     etapas = {e["id"]: e for e in montar_etapas(tarefas, execucao, frescor, catalogo)}
     assert list(etapas) == ["extracao", "bronze", "frescor", "silver", "gold", "visualizacao"]
     assert etapas["extracao"]["situacao"] == "falha"
-    assert "extrair: 1/2 ok, 1 falha" in etapas["extracao"]["detalhes"]
+    assert "Séries do Banco Central: 1 de 2 ok, 1 falha" in etapas["extracao"]["detalhes"]
     assert etapas["bronze"]["situacao"] == "ok"
     assert etapas["silver"]["situacao"] == "ok"
     assert etapas["gold"]["situacao"] == "ok"
@@ -232,6 +232,15 @@ def test_fonte_gold_usa_cache_e_parametros():
     sql, parametros = chamadas[0]
     assert "`projeto-exemplo.gold.fct_expectativa_vs_realizado`" in sql
     assert parametros == {"indicador": "IPCA"}
+
+
+def test_numeric_do_bigquery_vira_numero():
+    from decimal import Decimal
+
+    from farol_api.dados import normalizar_linha
+
+    linha = normalizar_linha({"mes": "2026-11-01", "selic": Decimal("13.75"), "ipca": None})
+    assert linha == {"mes": "2026-11-01", "selic": 13.75, "ipca": None}
 
 
 def test_fonte_gold_sem_projeto():

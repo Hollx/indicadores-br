@@ -1,6 +1,7 @@
 import { useState } from "react";
 
-import { Indisponivel, Painel, Status, dataHora, duracao } from "../componentes";
+import { Indisponivel, Painel, Status, TituloTela, dataHora, duracao, quando } from "../componentes";
+import { Explica, Termo } from "../glossario";
 import { useApi } from "../api";
 import GraficoBarras from "../graficos/GraficoBarras";
 import type { ExecucaoAirflow, TarefaAirflow } from "../tipos";
@@ -80,18 +81,40 @@ export default function Monitoramento() {
   const atual = selecionada ?? dados?.[0]?.id ?? null;
   const ordem = [...(dados ?? [])].reverse();
 
+  const ultima = dados?.[0];
+  const falhas = (dados ?? []).filter((r) => r.situacao === "falha").length;
+  const achado = ultima ? (
+    <>
+      <Status situacao={ultima.situacao} />
+      {`A última execução foi ${quando(ultima.inicio ?? ultima.agendada_para)}`}
+      {ultima.duracao_s !== null ? ` e levou ${duracao(ultima.duracao_s)}.` : "."}
+      {` Nas últimas ${dados!.length} execuções, ${falhas === 0 ? "nenhuma falhou" : `${falhas} falharam`}.`}
+    </>
+  ) : null;
+
   return (
-    <section>
-      <h1>Monitoramento</h1>
-      <p className="subtitulo">
-        Execuções do DAG <span className="codigo">indicadores_br</span> no Airflow: quanto duraram, quais
-        etapas falharam e quantas vezes cada tarefa precisou ser repetida.
-      </p>
+    <>
+      <TituloTela titulo="Execuções" achado={achado}>
+        <Explica titulo="O que é uma execução?">
+          <p>
+            Todo dia às 06:00 (horário de Brasília), o <Termo id="airflow">Airflow</Termo> dispara o pipeline:
+            busca os dados, carrega no banco, verifica o frescor e roda as transformações e testes. Cada
+            rodada completa é uma <Termo id="execucao">execução</Termo>.
+          </p>
+          <p>
+            Escolha uma execução na lista para ver cada tarefa, quanto tempo levou e se precisou ser repetida.
+            O Airflow tenta de novo sozinho quando uma API demora a responder.
+          </p>
+        </Explica>
+      </TituloTela>
       {erro || !dados ? (
         <Indisponivel erro={erro} />
       ) : (
         <>
-          <Painel titulo="Duração das execuções (minutos)">
+          <Painel
+            titulo="Quanto tempo cada execução levou?"
+            descricao="Duração em minutos. Barras vermelhas são execuções que falharam; a destacada é a selecionada abaixo."
+          >
             <GraficoBarras
               casas={1}
               barras={ordem.map((r) => ({
@@ -128,6 +151,6 @@ export default function Monitoramento() {
           </div>
         </>
       )}
-    </section>
+    </>
   );
 }

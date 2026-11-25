@@ -1,7 +1,18 @@
 import { useMemo, useState } from "react";
 
 import { ORDEM_CAMADAS, ROTULO_TIPO, useApi } from "../api";
-import type { Recurso } from "../tipos";
+import { TituloTela } from "../componentes";
+import { Explica, Termo } from "../glossario";
+import { formatarNumero } from "../graficos/escalas";
+import type { Recurso, Resumo } from "../tipos";
+import ResumoGovernanca from "./Governanca";
+
+const ROTULO_META: Record<string, string> = {
+  grao: "Cada linha é",
+  origem: "Origem",
+  atualizacao: "Atualização",
+  consumidores: "Quem usa",
+};
 
 function Detalhe({ recurso }: { recurso: Recurso }) {
   const { cobertura } = recurso;
@@ -21,7 +32,7 @@ function Detalhe({ recurso }: { recurso: Recurso }) {
         <dd>{recurso.dono ?? <em className="vazio">sem dono</em>}</dd>
         {metaExtra.map(([chave, valor]) => (
           <div key={chave} className="ficha-linha">
-            <dt>{chave}</dt>
+            <dt>{ROTULO_META[chave] ?? chave}</dt>
             <dd>{String(valor)}</dd>
           </div>
         ))}
@@ -39,30 +50,32 @@ function Detalhe({ recurso }: { recurso: Recurso }) {
       </dl>
 
       {recurso.colunas.length > 0 && (
-        <table className="tabela">
-          <thead>
-            <tr>
-              <th>Coluna</th>
-              <th>Descrição</th>
-              <th>Testes</th>
-            </tr>
-          </thead>
-          <tbody>
-            {recurso.colunas.map((c) => (
-              <tr key={c.nome}>
-                <td className="codigo">{c.nome}</td>
-                <td>{c.descricao || <em className="vazio">sem descrição</em>}</td>
-                <td>
-                  {c.testes.map((t) => (
-                    <span key={t} className="selo teste">
-                      {t}
-                    </span>
-                  ))}
-                </td>
+        <div className="rolagem">
+          <table className="tabela">
+            <thead>
+              <tr>
+                <th>Coluna</th>
+                <th>Descrição</th>
+                <th>Testes</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {recurso.colunas.map((c) => (
+                <tr key={c.nome}>
+                  <td className="codigo">{c.nome}</td>
+                  <td>{c.descricao || <em className="vazio">sem descrição</em>}</td>
+                  <td>
+                    {c.testes.map((t) => (
+                      <span key={t} className="selo teste">
+                        {t}
+                      </span>
+                    ))}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
 
       {recurso.testes.some((t) => !t.coluna) && (
@@ -80,6 +93,7 @@ function Detalhe({ recurso }: { recurso: Recurso }) {
 
 export default function Catalogo() {
   const { dados, erro, carregando } = useApi<Recurso[]>("/catalogo");
+  const resumo = useApi<Resumo>("/governanca/resumo");
   const [busca, setBusca] = useState("");
   const [camada, setCamada] = useState("todas");
   const [selecionado, setSelecionado] = useState<string | null>(null);
@@ -102,44 +116,67 @@ export default function Catalogo() {
   const camadas = ORDEM_CAMADAS.filter((c) => dados.some((r) => r.camada === c));
   const atual = dados.find((r) => r.id === selecionado) ?? filtrados[0];
 
+  const r = resumo.dados;
+  const achado = r
+    ? `${r.com_dono === r.recursos ? "Todas as" : `${r.com_dono} de`} ${r.recursos} tabelas têm dono e ${formatarNumero(r.pct_colunas_documentadas, 0)}% das colunas estão documentadas. Os testes de qualidade cobrem ${formatarNumero(r.pct_colunas_testadas, 0)}% das colunas: é aí que dá para melhorar.`
+    : null;
+
   return (
-    <section>
-      <h1>Catálogo</h1>
-      <p className="subtitulo">Fontes, tabelas e exposições do projeto, com dono, colunas e testes.</p>
-      <div className="filtros">
-        <input
-          type="search"
-          placeholder="Buscar tabela, coluna ou descrição"
-          value={busca}
-          onChange={(e) => setBusca(e.target.value)}
-        />
-        <select value={camada} onChange={(e) => setCamada(e.target.value)} aria-label="Camada">
-          <option value="todas">Todas as camadas</option>
-          {camadas.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="catalogo">
-        <ul className="lista">
-          {filtrados.map((r) => (
-            <li key={r.id}>
-              <button
-                className={atual?.id === r.id ? "ativo" : undefined}
-                onClick={() => setSelecionado(r.id)}
-              >
-                <span className={`ponto camada-${r.camada}`} aria-hidden />
-                <span className="lista-nome">{r.nome}</span>
-                <span className="lista-tipo">{ROTULO_TIPO[r.tipo]}</span>
-              </button>
-            </li>
-          ))}
-          {filtrados.length === 0 && <li className="vazio">Nada encontrado.</li>}
-        </ul>
-        {atual && <Detalhe recurso={atual} />}
-      </div>
-    </section>
+    <>
+      <TituloTela titulo="Catálogo" achado={achado}>
+        <Explica titulo="Por que isso importa?">
+          <p>
+            <Termo id="governanca">Governança</Termo> é saber o que existe nos dados, quem responde por cada
+            tabela e o que cada coluna significa. Sem isso, cada pessoa interpreta um número de um jeito.
+          </p>
+          <p>
+            Tudo aqui é lido automaticamente da documentação do <Termo id="dbt">dbt</Termo> a cada execução,
+            então o catálogo nunca fica desatualizado.
+          </p>
+        </Explica>
+      </TituloTela>
+      {r && <ResumoGovernanca dados={r} />}
+      <section className="secao" aria-labelledby="tabelas-titulo">
+        <div className="secao-topo">
+          <h2 id="tabelas-titulo">Tabelas, colunas e testes</h2>
+          <p>{dados.length} itens. Escolha um para ver as colunas.</p>
+        </div>
+        <div className="filtros">
+          <input
+            type="search"
+            aria-label="Buscar no catálogo"
+            placeholder="Buscar tabela, coluna ou descrição"
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+          />
+          <select value={camada} onChange={(e) => setCamada(e.target.value)} aria-label="Camada">
+            <option value="todas">Todas as camadas</option>
+            {camadas.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="catalogo">
+          <ul className="lista">
+            {filtrados.map((r) => (
+              <li key={r.id}>
+                <button
+                  className={atual?.id === r.id ? "ativo" : undefined}
+                  onClick={() => setSelecionado(r.id)}
+                >
+                  <span className={`ponto camada-${r.camada}`} aria-hidden />
+                  <span className="lista-nome">{r.nome}</span>
+                  <span className="lista-tipo">{ROTULO_TIPO[r.tipo]}</span>
+                </button>
+              </li>
+            ))}
+            {filtrados.length === 0 && <li className="vazio">Nada encontrado.</li>}
+          </ul>
+          {atual && <Detalhe recurso={atual} />}
+        </div>
+      </section>
+    </>
   );
 }

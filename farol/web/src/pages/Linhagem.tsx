@@ -3,6 +3,8 @@ import "@xyflow/react/dist/style.css";
 import { useMemo } from "react";
 
 import { ORDEM_CAMADAS, ROTULO_TIPO, useApi } from "../api";
+import { TituloTela } from "../componentes";
+import { Explica, Termo } from "../glossario";
 import type { Linhagem as TLinhagem } from "../tipos";
 
 const LARGURA_COLUNA = 270;
@@ -93,15 +95,43 @@ export default function Linhagem() {
   if (erro || !grafo) return <p className="estado erro">Não foi possível carregar: {erro}</p>;
 
   return (
-    <section>
-      <h1>Linhagem</h1>
-      <p className="subtitulo">Do dado bruto ao dashboard: cada seta é uma dependência declarada no dbt.</p>
+    <>
+      <TituloTela
+        titulo="Linhagem"
+        achado={`Cada número dos gráficos tem origem rastreável: ${grafo.nos.length} etapas ligadas por ${grafo.arestas.length} dependências, da API do Banco Central até a tela.`}
+      >
+        <Explica titulo="Como ler este mapa">
+          <p>
+            Cada caixa é uma tabela e cada seta mostra de onde ela tira os dados. Da esquerda para a direita,
+            o dado sai bruto da fonte e chega pronto ao gráfico. Se uma tabela tiver problema, o mapa mostra
+            tudo o que depende dela.
+          </p>
+          <p>
+            Esta é a <Termo id="linhagem">linhagem</Termo> declarada no <Termo id="dbt">dbt</Termo>. Arraste
+            para mover e use a roda do mouse ou os botões para aproximar.
+          </p>
+        </Explica>
+      </TituloTela>
       <div className="grafo">
         <ReactFlow nodes={grafo.nos} edges={grafo.arestas} fitView nodesConnectable={false}>
           <Background gap={20} />
           <Controls showInteractive={false} />
         </ReactFlow>
       </div>
-    </section>
+      <div className="camadas-legenda" aria-label="Camadas">
+        {CAMADAS.map(([c, texto]) => (
+          <span key={c}>
+            <span className={`ponto camada-${c}`} aria-hidden /> {texto}
+          </span>
+        ))}
+      </div>
+    </>
   );
 }
+
+const CAMADAS: [string, string][] = [
+  ["bronze", "Bronze: dado bruto"],
+  ["silver", "Silver: dado limpo"],
+  ["gold", "Gold: pronto para análise"],
+  ["consumo", "Consumo: gráficos e painéis"],
+];

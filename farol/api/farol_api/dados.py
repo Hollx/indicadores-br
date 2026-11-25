@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import time
 from collections.abc import Callable
+from decimal import Decimal
 from typing import Any
 
 # Teto por consulta: protege a cota gratuita do BigQuery sandbox (1 TB/mês).
@@ -18,6 +19,12 @@ class DadosIndisponiveis(RuntimeError):
 
 
 Executor = Callable[[str, dict[str, Any]], list[dict[str, Any]]]
+
+
+def normalizar_linha(linha: dict[str, Any]) -> dict[str, Any]:
+    """NUMERIC do BigQuery chega como Decimal, que o FastAPI serializa como texto ("13.75").
+    O front espera número, então Decimal vira float (os valores aqui têm poucas casas)."""
+    return {k: float(v) if isinstance(v, Decimal) else v for k, v in linha.items()}
 
 
 def executor_bigquery(projeto: str) -> Executor:
@@ -35,7 +42,7 @@ def executor_bigquery(projeto: str) -> Executor:
             ],
         )
         linhas = cliente.query(sql, job_config=config).result()
-        return [dict(linha.items()) for linha in linhas]
+        return [normalizar_linha(dict(linha.items())) for linha in linhas]
 
     return executar
 
