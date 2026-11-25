@@ -135,10 +135,7 @@ def montar_linhagem(catalogo: list[dict[str, Any]]) -> dict[str, list[dict[str, 
         for r in catalogo
     ]
     arestas = [
-        {"origem": pai, "destino": r["id"]}
-        for r in catalogo
-        for pai in r["pais"]
-        if pai in ids
+        {"origem": pai, "destino": r["id"]} for r in catalogo for pai in r["pais"] if pai in ids
     ]
     return {"nos": nos, "arestas": arestas}
 
@@ -173,8 +170,6 @@ def resumir_cobertura(catalogo: list[dict[str, Any]]) -> dict[str, Any]:
         "pct_colunas_testadas": _pct(testadas, colunas),
         "por_camada": [
             {"camada": camada, **v, "pct_documentadas": _pct(v["documentadas"], v["colunas"])}
-            for camada, v in sorted(
-                por_camada.items(), key=lambda kv: ORDEM_CAMADAS.get(kv[0], 9)
-            )
+            for camada, v in sorted(por_camada.items(), key=lambda kv: ORDEM_CAMADAS.get(kv[0], 9))
         ],
     }

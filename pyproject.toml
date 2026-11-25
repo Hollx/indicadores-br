@@ -16,3 +16,7 @@ select = ["E", "F", "I", "B", "UP"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["include", "indicadores_spark", "farol_api"]
+
+[tool.ruff.lint.flake8-bugbear]
+# Depends/Query nos defaults é o padrão do FastAPI.
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Query"]

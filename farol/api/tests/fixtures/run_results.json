@@ -1,0 +1,569 @@
+{
+ "metadata": {
+  "dbt_schema_version": "https://schemas.getdbt.com/dbt/run-results/v6.json",
+  "dbt_version": "1.12.6",
+  "generated_at": "2026-11-05T18:56:36.482834Z",
+  "invocation_id": "eb6cdb3b-1ce1-4b5e-9b77-07aa98afe6c0",
+  "invocation_started_at": "2026-11-05T18:56:02.999963Z"
+ },
+ "results": [
+  {
+   "status": "pass",
+   "timing": [
+    {
+     "name": "compile",
+     "started_at": "2026-11-05T18:56:07.027274Z",
+     "completed_at": "2026-11-05T18:56:07.066650Z"
+    },
+    {
+     "name": "execute",
+     "started_at": "2026-11-05T18:56:07.067328Z",
+     "completed_at": "2026-11-05T18:56:09.362843Z"
+    }
+   ],
+   "execution_time": 2.339327096939087,
+   "adapter_response": {
+    "_message": "SELECT (1.0 rows, 25.0 KiB processed)",
+    "code": "SELECT",
+    "rows_affected": 1,
+    "bytes_processed": 25616,
+    "bytes_billed": 10485760,
+    "slot_ms": 6
+   },
+   "message": null,
+   "failures": 0,
+   "unique_id": "test.indicadores_br.source_not_null_bronze_sgs_observacoes_data_referencia.02ee576c80",
+   "compiled": true,
+   "relation_name": null,
+   "batch_results": null,
+   "overload_results": null
+  },
+  {
+   "status": "pass",
+   "timing": [
+    {
+     "name": "compile",
+     "started_at": "2026-11-05T18:56:09.366992Z",
+     "completed_at": "2026-11-05T18:56:09.372443Z"
+    },
+    {
+     "name": "execute",
+     "started_at": "2026-11-05T18:56:09.372791Z",
+     "completed_at": "2026-11-05T18:56:11.689921Z"
+    }
+   ],
+   "execution_time": 2.3259382247924805,
+   "adapter_response": {
+    "_message": "SELECT (1.0 rows, 25.0 KiB processed)",
+    "code": "SELECT",
+    "rows_affected": 1,
+    "bytes_processed": 25616,
+    "bytes_billed": 10485760,
+    "slot_ms": 12
+   },
+   "message": null,
+   "failures": 0,
+   "unique_id": "test.indicadores_br.source_not_null_bronze_sgs_observacoes_ingerido_em.3f80680363",
+   "compiled": true,
+   "relation_name": null,
+   "batch_results": null,
+   "overload_results": null
+  },
+  {
+   "status": "success",
+   "timing": [
+    {
+     "name": "compile",
+     "started_at": "2026-11-05T18:56:07.026715Z",
+     "completed_at": "2026-11-05T18:56:07.026721Z"
+    },
+    {
+     "name": "execute",
+     "started_at": "2026-11-05T18:56:07.041347Z",
+     "completed_at": "2026-11-05T18:56:13.960105Z"
+    }
+   ],
+   "execution_time": 6.937382221221924,
+   "adapter_response": {
+    "_message": "INSERT 4",
+    "code": "INSERT",
+    "rows_affected": 4
+   },
+   "message": "INSERT 4",
+   "failures": null,
+   "unique_id": "seed.indicadores_br.series_sgs",
+   "compiled": null,
+   "relation_name": null,
+   "batch_results": null,
+   "overload_results": null
+  },
+  {
+   "status": "pass",
+   "timing": [
+    {
+     "name": "compile",
+     "started_at": "2026-11-05T18:56:11.695988Z",
+     "completed_at": "2026-11-05T18:56:11.701396Z"
+    },
+    {
+     "name": "execute",
+     "started_at": "2026-11-05T18:56:11.701729Z",
+     "completed_at": "2026-11-05T18:56:14.216536Z"
+    }
+   ],
+   "execution_time": 2.5223119258880615,
+   "adapter_response": {
+    "_message": "SELECT (1.0 rows, 25.0 KiB processed)",
+    "code": "SELECT",
+    "rows_affected": 1,
+    "bytes_processed": 25616,
+    "bytes_billed": 10485760,
+    "slot_ms": 5
+   },
+   "message": null,
+   "failures": 0,
+   "unique_id": "test.indicadores_br.source_not_null_bronze_sgs_observacoes_serie_id.3842afb78e",
+   "compiled": true,
+   "relation_name": null,
+   "batch_results": null,
+   "overload_results": null
+  },
+  {
+   "status": "pass",
+   "timing": [
+    {
+     "name": "compile",
+     "started_at": "2026-11-05T18:56:13.968657Z",
+     "completed_at": "2026-11-05T18:56:13.988408Z"
+    },
+    {
+     "name": "execute",
+     "started_at": "2026-11-05T18:56:13.988945Z",
+     "completed_at": "2026-11-05T18:56:16.185194Z"
+    }
+   ],
+   "execution_time": 2.21882700920105,
+   "adapter_response": {
+    "_message": "SELECT (1.0 rows, 32.0 Bytes processed)",
+    "code": "SELECT",
+    "rows_affected": 1,
+    "bytes_processed": 32,
+    "bytes_billed": 10485760,
+    "slot_ms": 13
+   },
+   "message": null,
+   "failures": 0,
+   "unique_id": "test.indicadores_br.accepted_values_series_sgs_periodicidade__diaria__mensal.48195e03a7",
+   "compiled": true,
+   "relation_name": null,
+   "batch_results": null,
+   "overload_results": null
+  },
+  {
+   "status": "pass",
+   "timing": [
+    {
+     "name": "compile",
+     "started_at": "2026-11-05T18:56:14.221603Z",
+     "completed_at": "2026-11-05T18:56:14.226593Z"
+    },
+    {
+     "name": "execute",
+     "started_at": "2026-11-05T18:56:14.226884Z",
+     "completed_at": "2026-11-05T18:56:16.493246Z"
+    }
+   ],
+   "execution_time": 2.273837089538574,
+   "adapter_response": {
+    "_message": "SELECT (1.0 rows, 32.0 Bytes processed)",
+    "code": "SELECT",
+    "rows_affected": 1,
+    "bytes_processed": 32,
+    "bytes_billed": 10485760,
+    "slot_ms": 9
+   },
+   "message": null,
+   "failures": 0,
+   "unique_id": "test.indicadores_br.not_null_series_sgs_serie_id.16e850fd11",
+   "compiled": true,
+   "relation_name": null,
+   "batch_results": null,
+   "overload_results": null
+  },
+  {
+   "status": "pass",
+   "timing": [
+    {
+     "name": "compile",
+     "started_at": "2026-11-05T18:56:16.189778Z",
+     "completed_at": "2026-11-05T18:56:16.199712Z"
+    },
+    {
+     "name": "execute",
+     "started_at": "2026-11-05T18:56:16.200038Z",
+     "completed_at": "2026-11-05T18:56:18.805358Z"
+    }
+   ],
+   "execution_time": 2.6173837184906006,
+   "adapter_response": {
+    "_message": "SELECT (1.0 rows, 32.0 Bytes processed)",
+    "code": "SELECT",
+    "rows_affected": 1,
+    "bytes_processed": 32,
+    "bytes_billed": 10485760,
+    "slot_ms": 9
+   },
+   "message": null,
+   "failures": 0,
+   "unique_id": "test.indicadores_br.unique_series_sgs_serie_id.1e7938e7ae",
+   "compiled": true,
+   "relation_name": null,
+   "batch_results": null,
+   "overload_results": null
+  },
+  {
+   "status": "success",
+   "timing": [
+    {
+     "name": "compile",
+     "started_at": "2026-11-05T18:56:18.809955Z",
+     "completed_at": "2026-11-05T18:56:18.811612Z"
+    },
+    {
+     "name": "execute",
+     "started_at": "2026-11-05T18:56:18.811880Z",
+     "completed_at": "2026-11-05T18:56:20.723069Z"
+    }
+   ],
+   "execution_time": 1.9147512912750244,
+   "adapter_response": {
+    "_message": "CREATE VIEW (0 processed)",
+    "code": "CREATE VIEW",
+    "bytes_processed": 0,
+    "bytes_billed": 0,
+    "slot_ms": 0
+   },
+   "message": "CREATE VIEW (0 processed)",
+   "failures": null,
+   "unique_id": "model.indicadores_br.stg_sgs__observacoes",
+   "compiled": true,
+   "relation_name": "`projeto-exemplo`.`silver`.`stg_sgs__observacoes`",
+   "batch_results": null,
+   "overload_results": null
+  },
+  {
+   "status": "pass",
+   "timing": [
+    {
+     "name": "compile",
+     "started_at": "2026-11-05T18:56:20.732053Z",
+     "completed_at": "2026-11-05T18:56:20.738677Z"
+    },
+    {
+     "name": "execute",
+     "started_at": "2026-11-05T18:56:20.738978Z",
+     "completed_at": "2026-11-05T18:56:23.295503Z"
+    }
+   ],
+   "execution_time": 2.567257881164551,
+   "adapter_response": {
+    "_message": "SELECT (1.0 rows, 75.1 KiB processed)",
+    "code": "SELECT",
+    "rows_affected": 1,
+    "bytes_processed": 76880,
+    "bytes_billed": 20971520,
+    "slot_ms": 4
+   },
+   "message": null,
+   "failures": 0,
+   "unique_id": "test.indicadores_br.not_null_stg_sgs__observacoes_data_referencia.ececd7a59f",
+   "compiled": true,
+   "relation_name": null,
+   "batch_results": null,
+   "overload_results": null
+  },
+  {
+   "status": "pass",
+   "timing": [
+    {
+     "name": "compile",
+     "started_at": "2026-11-05T18:56:20.730783Z",
+     "completed_at": "2026-11-05T18:56:20.737174Z"
+    },
+    {
+     "name": "execute",
+     "started_at": "2026-11-05T18:56:20.737550Z",
+     "completed_at": "2026-11-05T18:56:23.367115Z"
+    }
+   ],
+   "execution_time": 2.6391732692718506,
+   "adapter_response": {
+    "_message": "SELECT (1.0 rows, 75.1 KiB processed)",
+    "code": "SELECT",
+    "rows_affected": 1,
+    "bytes_processed": 76880,
+    "bytes_billed": 20971520,
+    "slot_ms": 11
+   },
+   "message": null,
+   "failures": 0,
+   "unique_id": "test.indicadores_br.assert_sem_duplicidade_serie_data",
+   "compiled": true,
+   "relation_name": null,
+   "batch_results": null,
+   "overload_results": null
+  },
+  {
+   "status": "pass",
+   "timing": [
+    {
+     "name": "compile",
+     "started_at": "2026-11-05T18:56:23.299516Z",
+     "completed_at": "2026-11-05T18:56:23.303674Z"
+    },
+    {
+     "name": "execute",
+     "started_at": "2026-11-05T18:56:23.303982Z",
+     "completed_at": "2026-11-05T18:56:25.838520Z"
+    }
+   ],
+   "execution_time": 2.540752410888672,
+   "adapter_response": {
+    "_message": "SELECT (1.0 rows, 75.1 KiB processed)",
+    "code": "SELECT",
+    "rows_affected": 1,
+    "bytes_processed": 76932,
+    "bytes_billed": 20971520,
+    "slot_ms": 10
+   },
+   "message": null,
+   "failures": 0,
+   "unique_id": "test.indicadores_br.not_null_stg_sgs__observacoes_nome_serie.059a59a4b8",
+   "compiled": true,
+   "relation_name": null,
+   "batch_results": null,
+   "overload_results": null
+  },
+  {
+   "status": "pass",
+   "timing": [
+    {
+     "name": "compile",
+     "started_at": "2026-11-05T18:56:23.371571Z",
+     "completed_at": "2026-11-05T18:56:23.381632Z"
+    },
+    {
+     "name": "execute",
+     "started_at": "2026-11-05T18:56:23.382056Z",
+     "completed_at": "2026-11-05T18:56:25.889722Z"
+    }
+   ],
+   "execution_time": 2.5203654766082764,
+   "adapter_response": {
+    "_message": "SELECT (1.0 rows, 75.1 KiB processed)",
+    "code": "SELECT",
+    "rows_affected": 1,
+    "bytes_processed": 76880,
+    "bytes_billed": 20971520,
+    "slot_ms": 4
+   },
+   "message": null,
+   "failures": 0,
+   "unique_id": "test.indicadores_br.not_null_stg_sgs__observacoes_serie_id.28376c2481",
+   "compiled": true,
+   "relation_name": null,
+   "batch_results": null,
+   "overload_results": null
+  },
+  {
+   "status": "pass",
+   "timing": [
+    {
+     "name": "compile",
+     "started_at": "2026-11-05T18:56:25.895805Z",
+     "completed_at": "2026-11-05T18:56:25.909429Z"
+    },
+    {
+     "name": "execute",
+     "started_at": "2026-11-05T18:56:25.909725Z",
+     "completed_at": "2026-11-05T18:56:28.371610Z"
+    }
+   ],
+   "execution_time": 2.4780166149139404,
+   "adapter_response": {
+    "_message": "SELECT (1.0 rows, 75.1 KiB processed)",
+    "code": "SELECT",
+    "rows_affected": 1,
+    "bytes_processed": 76880,
+    "bytes_billed": 20971520,
+    "slot_ms": 19
+   },
+   "message": null,
+   "failures": 0,
+   "unique_id": "test.indicadores_br.relationships_stg_sgs__observacoes_serie_id__serie_id__ref_series_sgs_.26838dd762",
+   "compiled": true,
+   "relation_name": null,
+   "batch_results": null,
+   "overload_results": null
+  },
+  {
+   "status": "pass",
+   "timing": [
+    {
+     "name": "compile",
+     "started_at": "2026-11-05T18:56:25.844139Z",
+     "completed_at": "2026-11-05T18:56:25.849289Z"
+    },
+    {
+     "name": "execute",
+     "started_at": "2026-11-05T18:56:25.849626Z",
+     "completed_at": "2026-11-05T18:56:28.375451Z"
+    }
+   ],
+   "execution_time": 2.533613920211792,
+   "adapter_response": {
+    "_message": "SELECT (1.0 rows, 98.0 KiB processed)",
+    "code": "SELECT",
+    "rows_affected": 1,
+    "bytes_processed": 100370,
+    "bytes_billed": 20971520,
+    "slot_ms": 11
+   },
+   "message": null,
+   "failures": 0,
+   "unique_id": "test.indicadores_br.not_null_stg_sgs__observacoes_valor.ac7db19fe9",
+   "compiled": true,
+   "relation_name": null,
+   "batch_results": null,
+   "overload_results": null
+  },
+  {
+   "status": "success",
+   "timing": [
+    {
+     "name": "compile",
+     "started_at": "2026-11-05T18:56:28.381588Z",
+     "completed_at": "2026-11-05T18:56:28.383547Z"
+    },
+    {
+     "name": "execute",
+     "started_at": "2026-11-05T18:56:28.383839Z",
+     "completed_at": "2026-11-05T18:56:31.974378Z"
+    }
+   ],
+   "execution_time": 3.5950794219970703,
+   "adapter_response": {
+    "_message": "CREATE TABLE (61.0 rows, 98.1 KiB processed)",
+    "code": "CREATE TABLE",
+    "rows_affected": 61,
+    "bytes_processed": 100422,
+    "bytes_billed": 20971520,
+    "slot_ms": 17759
+   },
+   "message": "CREATE TABLE (61.0 rows, 98.1 KiB processed)",
+   "failures": null,
+   "unique_id": "model.indicadores_br.fct_indicadores_mensais",
+   "compiled": true,
+   "relation_name": "`projeto-exemplo`.`gold`.`fct_indicadores_mensais`",
+   "batch_results": null,
+   "overload_results": null
+  },
+  {
+   "status": "pass",
+   "timing": [
+    {
+     "name": "compile",
+     "started_at": "2026-11-05T18:56:31.981686Z",
+     "completed_at": "2026-11-05T18:56:31.991962Z"
+    },
+    {
+     "name": "execute",
+     "started_at": "2026-11-05T18:56:31.992454Z",
+     "completed_at": "2026-11-05T18:56:34.213211Z"
+    }
+   ],
+   "execution_time": 2.234236240386963,
+   "adapter_response": {
+    "_message": "SELECT (1.0 rows, 944.0 Bytes processed)",
+    "code": "SELECT",
+    "rows_affected": 1,
+    "bytes_processed": 944,
+    "bytes_billed": 10485760,
+    "slot_ms": 7
+   },
+   "message": null,
+   "failures": 0,
+   "unique_id": "test.indicadores_br.assert_ipca_faixa_plausivel",
+   "compiled": true,
+   "relation_name": null,
+   "batch_results": null,
+   "overload_results": null
+  },
+  {
+   "status": "pass",
+   "timing": [
+    {
+     "name": "compile",
+     "started_at": "2026-11-05T18:56:31.983523Z",
+     "completed_at": "2026-11-05T18:56:31.990533Z"
+    },
+    {
+     "name": "execute",
+     "started_at": "2026-11-05T18:56:31.990842Z",
+     "completed_at": "2026-11-05T18:56:34.341098Z"
+    }
+   ],
+   "execution_time": 2.3616113662719727,
+   "adapter_response": {
+    "_message": "SELECT (1.0 rows, 488.0 Bytes processed)",
+    "code": "SELECT",
+    "rows_affected": 1,
+    "bytes_processed": 488,
+    "bytes_billed": 10485760,
+    "slot_ms": 11
+   },
+   "message": null,
+   "failures": 0,
+   "unique_id": "test.indicadores_br.not_null_fct_indicadores_mensais_mes.bcf3f8c0b0",
+   "compiled": true,
+   "relation_name": null,
+   "batch_results": null,
+   "overload_results": null
+  },
+  {
+   "status": "pass",
+   "timing": [
+    {
+     "name": "compile",
+     "started_at": "2026-11-05T18:56:34.217749Z",
+     "completed_at": "2026-11-05T18:56:34.222771Z"
+    },
+    {
+     "name": "execute",
+     "started_at": "2026-11-05T18:56:34.223042Z",
+     "completed_at": "2026-11-05T18:56:36.450967Z"
+    }
+   ],
+   "execution_time": 2.234841823577881,
+   "adapter_response": {
+    "_message": "SELECT (1.0 rows, 488.0 Bytes processed)",
+    "code": "SELECT",
+    "rows_affected": 1,
+    "bytes_processed": 488,
+    "bytes_billed": 10485760,
+    "slot_ms": 8
+   },
+   "message": null,
+   "failures": 0,
+   "unique_id": "test.indicadores_br.unique_fct_indicadores_mensais_mes.7cadf87bdf",
+   "compiled": true,
+   "relation_name": null,
+   "batch_results": null,
+   "overload_results": null
+  }
+ ],
+ "elapsed_time": 31.25773811340332,
+ "args": {
+  "which": "build"
+ }
+}

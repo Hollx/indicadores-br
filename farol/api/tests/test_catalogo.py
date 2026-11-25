@@ -17,9 +17,10 @@ def manifest():
 
 
 @pytest.fixture
-def cliente(monkeypatch):
-    monkeypatch.setattr(main, "leitor", LeitorArtefatos(FIXTURES))
-    return TestClient(main.app)
+def cliente():
+    main.app.dependency_overrides[main.obter_leitor] = lambda: LeitorArtefatos(FIXTURES)
+    yield TestClient(main.app)
+    main.app.dependency_overrides.clear()
 
 
 def _por_nome(catalogo, nome):
@@ -85,8 +86,11 @@ def test_api_responde(cliente):
     assert cliente.get("/governanca/resumo").json()["testes"] > 0
 
 
-def test_api_sem_artefatos(monkeypatch, tmp_path):
-    monkeypatch.setattr(main, "leitor", LeitorArtefatos(tmp_path))
-    cliente = TestClient(main.app)
-    assert cliente.get("/saude").json() == {"status": "sem_artefatos"}
-    assert cliente.get("/catalogo").status_code == 503
+def test_api_sem_artefatos(tmp_path):
+    main.app.dependency_overrides[main.obter_leitor] = lambda: LeitorArtefatos(tmp_path)
+    try:
+        cliente = TestClient(main.app)
+        assert cliente.get("/saude").json() == {"status": "sem_artefatos"}
+        assert cliente.get("/catalogo").status_code == 503
+    finally:
+        main.app.dependency_overrides.clear()

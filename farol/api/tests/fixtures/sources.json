@@ -1,0 +1,51 @@
+{
+ "metadata": {
+  "dbt_schema_version": "https://schemas.getdbt.com/dbt/sources/v3.json",
+  "dbt_version": "1.12.6",
+  "generated_at": "2026-11-05T18:56:00.267607Z",
+  "invocation_id": "01fbffd1-637e-43fc-8c57-363895d6cbfa",
+  "invocation_started_at": "2026-11-05T18:55:52.796695Z"
+ },
+ "results": [
+  {
+   "unique_id": "source.indicadores_br.bronze.sgs_observacoes",
+   "max_loaded_at": "2026-11-05T18:55:30.630997+00:00",
+   "snapshotted_at": "2026-11-05T18:55:58.627545+00:00",
+   "max_loaded_at_time_ago_in_s": 27.996548,
+   "status": "pass",
+   "criteria": {
+    "warn_after": {
+     "count": 26,
+     "period": "hour"
+    },
+    "error_after": {
+     "count": 50,
+     "period": "hour"
+    },
+    "filter": null
+   },
+   "adapter_response": {
+    "_message": "SELECT (1.0 rows, 25.0 KiB processed)",
+    "code": "SELECT",
+    "rows_affected": 1,
+    "bytes_processed": 25616,
+    "bytes_billed": 10485760,
+    "slot_ms": 4
+   },
+   "timing": [
+    {
+     "name": "compile",
+     "started_at": "2026-11-05T18:55:57.243801Z",
+     "completed_at": "2026-11-05T18:55:57.243808Z"
+    },
+    {
+     "name": "execute",
+     "started_at": "2026-11-05T18:55:57.244211Z",
+     "completed_at": "2026-11-05T18:56:00.234455Z"
+    }
+   ],
+   "execution_time": 2.9915027618408203
+  }
+ ],
+ "elapsed_time": 3.848581314086914
+}
