@@ -173,7 +173,7 @@ export const CASOS: Caso[] = [
   {
     id: "glpi",
     fase: "Service Desk, onde comecei com dados",
-    titulo: "Inventário de computadores atualizado todo dia pela API do GLPI",
+    titulo: "Inventário de computadores da API do GLPI ao painel, todo dia",
     problema:
       "Os dados de inventário dos computadores ficavam no GLPI e precisavam chegar consolidados a uma planilha para os relatórios gerenciais.",
     feito: [
@@ -182,9 +182,11 @@ export const CASOS: Caso[] = [
       "Traduz os códigos de tipo, status, grupo e localização em nomes, com cache de 6 horas para não repetir consultas.",
       "Tenta de novo sozinho quando o servidor falha e diminui o tamanho da página quando a resposta vem grande demais.",
       "Grava o resultado de uma vez numa planilha do Google Sheets com 13 colunas, numa execução agendada todos os dias.",
+      "A planilha alimentava um painel no Looker Studio, onde ficava a visualização final do inventário.",
     ],
-    resultado: "O inventário passou a chegar atualizado todo dia na planilha, sem extração manual.",
-    ferramentas: ["Google Apps Script", "JavaScript", "API REST", "GLPI", "Google Sheets"],
+    resultado:
+      "Um pipeline de ponta a ponta, da API ao painel: o inventário chegava atualizado todo dia no Looker Studio, sem extração manual.",
+    ferramentas: ["Google Apps Script", "JavaScript", "API REST", "GLPI", "Google Sheets", "Looker Studio"],
   },
   {
     id: "conhecimento",
