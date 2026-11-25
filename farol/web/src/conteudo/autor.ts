@@ -37,16 +37,16 @@ export const CARGOS: Cargo[] = [
   {
     empresa: "Visto Tecnologia",
     cargo: "Engenheiro de Dados",
-    periodo: "2025 – hoje",
+    periodo: "jan/2025 – hoje",
     resumo:
       "Pipelines ETL/ELT, Data Warehouse no BigQuery, governança de dados, APIs e ferramentas internas para as áreas de negócio.",
   },
   {
     empresa: "Visto Tecnologia",
     cargo: "Analista de Service Desk",
-    periodo: "2022 – 2025",
+    periodo: "2022 – dez/2024",
     resumo:
-      "Suporte técnico pelo Jira Service Management, automação de processos internos e consolidação de dados de inventário para relatórios gerenciais. Foi aqui que comecei a trabalhar com dados.",
+      "Suporte técnico pelo Jira Service Management, automação de processos internos e consolidação de dados de inventário para relatórios gerenciais. De agosto a dezembro de 2024, período de experiência como Engenheiro de Dados, concluído com a efetivação no cargo em janeiro de 2025.",
   },
 ];
 

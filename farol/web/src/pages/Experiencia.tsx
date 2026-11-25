@@ -45,7 +45,7 @@ export default function Experiencia() {
     <>
       <TituloTela
         titulo="Experiência"
-        achado={`${AUTOR.cargo} na ${CARGOS[0].empresa}, a divisão de tecnologia do grupo Arizona, desde 2025, depois de começar com dados ainda no Service Desk. Abaixo estão casos reais do trabalho, e o Farol mostra as mesmas práticas funcionando com dados públicos.`}
+        achado={`${AUTOR.cargo} na ${CARGOS[0].empresa}, a divisão de tecnologia do grupo Arizona, atuando com engenharia de dados desde agosto de 2024 e efetivado no cargo em janeiro de 2025. Abaixo estão casos reais do trabalho, e o Farol mostra as mesmas práticas funcionando com dados públicos.`}
         acao={
           <div className="controles">
             <a className="botao-secundario botao-link" href={AUTOR.linkedin} target="_blank" rel="noreferrer">
