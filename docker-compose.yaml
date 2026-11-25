@@ -26,7 +26,8 @@ x-airflow-common: &airflow-common
     # ./dbt é montado do checkout (dono root na VPS) e o Airflow roda sem root:
     # o dbt escreve logs e artefatos fora dele, em pastas graváveis pelo container.
     DBT_LOG_PATH: /opt/airflow/logs/dbt
-    DBT_TARGET_PATH: /tmp/dbt-target
+    # Artefatos (manifest, run_results, sources) numa pasta compartilhada com o Farol.
+    DBT_TARGET_PATH: /opt/airflow/dbt-artefatos
     DBT_SEND_ANONYMOUS_USAGE_STATS: "false"
     DADOS_DIR: /opt/airflow/data
     PYTHONPATH: /opt/airflow
@@ -36,6 +37,7 @@ x-airflow-common: &airflow-common
     - ./dbt:/opt/airflow/dbt
     - ./data:/opt/airflow/data
     - ./logs:/opt/airflow/logs
+    - ./dbt-artefatos:/opt/airflow/dbt-artefatos
     - ./secrets:/opt/airflow/secrets:ro
 
 services:
@@ -118,5 +120,36 @@ services:
       - "127.0.0.1:3000:3000"
     mem_limit: 512m
 
+  # Farol: monitoramento, governança, qualidade e visualização (docs/FAROL.md).
+  # A API só lê: artefatos do dbt (ro), API do Airflow (GET) e a Gold (SA só de leitura).
+  farol-api:
+    build:
+      context: ./farol/api
+    image: indicadores-br-farol-api:local
+    restart: unless-stopped
+    environment:
+      DBT_ARTEFATOS_DIR: /artefatos
+      FAROL_DB: /dados/farol.db
+      AIRFLOW_URL: http://airflow-apiserver:8080
+      GCP_PROJECT_ID: ${GCP_PROJECT_ID}
+      GOOGLE_APPLICATION_CREDENTIALS: /secrets/sa-dashboard.json
+    volumes:
+      - ./dbt-artefatos:/artefatos:ro
+      - farol-dados:/dados
+      - ./secrets/sa-dashboard.json:/secrets/sa-dashboard.json:ro
+    mem_limit: 384m
+
+  farol-web:
+    build:
+      context: ./farol/web
+    image: indicadores-br-farol-web:local
+    restart: unless-stopped
+    depends_on:
+      - farol-api
+    ports:
+      - "127.0.0.1:3010:80"
+    mem_limit: 64m
+
 volumes:
   pgdata:
+  farol-dados:

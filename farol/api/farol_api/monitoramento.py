@@ -63,8 +63,13 @@ class ClienteAirflow:
         return bool(self.url)
 
     def _autenticar(self) -> str:
-        corpo = {"username": self.usuario, "password": self.senha} if self.usuario else {}
-        resposta = self.http.post(f"{self.url}/auth/token", json=corpo)
+        """Token do simple auth manager: POST com usuário e senha, ou GET no modo em que
+        todos são admin (SIMPLE_AUTH_MANAGER_ALL_ADMINS), que não pede credenciais."""
+        if self.usuario:
+            corpo = {"username": self.usuario, "password": self.senha}
+            resposta = self.http.post(f"{self.url}/auth/token", json=corpo)
+        else:
+            resposta = self.http.get(f"{self.url}/auth/token")
         resposta.raise_for_status()
         return resposta.json()["access_token"]
 

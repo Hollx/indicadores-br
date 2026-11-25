@@ -99,6 +99,9 @@ def _airflow_falso(estado_extrair="success"):
     def responder(requisicao: httpx.Request) -> httpx.Response:
         caminho = requisicao.url.path
         if caminho == "/auth/token":
+            # POST exige credenciais; GET só no modo "todos admin" (sem usuário).
+            if requisicao.method == "POST":
+                assert b"username" in requisicao.content
             return httpx.Response(201, json={"access_token": "t"})
         assert requisicao.headers["Authorization"] == "Bearer t"
         if caminho.endswith("/dagRuns"):
@@ -161,6 +164,22 @@ def test_tarefas_mapeadas_sao_agrupadas_pela_pior_situacao():
     assert tarefas["extrair"]["instancias"] == 2
     assert tarefas["extrair"]["situacao"] == "falha"
     assert tarefas["extrair"]["duracao_s"] == 120.0
+
+
+def test_airflow_sem_usuario_pede_token_por_get():
+    metodos = []
+
+    def responder(requisicao):
+        metodos.append((requisicao.method, requisicao.url.path))
+        if requisicao.url.path == "/auth/token":
+            return httpx.Response(201, json={"access_token": "t"})
+        return httpx.Response(200, json={"dag_runs": []})
+
+    cliente = ClienteAirflow(
+        "http://a", http=httpx.Client(transport=httpx.MockTransport(responder))
+    )
+    assert cliente.execucoes() == []
+    assert metodos[0] == ("GET", "/auth/token")
 
 
 def test_airflow_sem_url():

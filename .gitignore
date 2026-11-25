@@ -12,6 +12,7 @@ terraform/*.tfstate.*
 terraform/terraform.tfvars
 
 # dbt
+dbt-artefatos/
 dbt/target/
 dbt/logs/
 dbt/dbt_packages/

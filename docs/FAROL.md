@@ -47,6 +47,17 @@ Variáveis opcionais da API:
 | `AIRFLOW_URL`, `AIRFLOW_USUARIO`, `AIRFLOW_SENHA` | API do Airflow; sem `AIRFLOW_URL` o monitoramento aparece como indisponível |
 | `GCP_PROJECT_ID`, `GOOGLE_APPLICATION_CREDENTIALS` | Leitura da camada Gold; sem elas a visualização aparece como indisponível |
 
+## Deploy (VPS)
+
+`docker-compose.yaml` sobe `farol-api` (FastAPI, uid 10001) e `farol-web` (nginx com o build do
+front, publicado em `127.0.0.1:3010`). O Airflow grava os artefatos do dbt em `./dbt-artefatos`,
+montado só leitura na API. Na VPS, `docker-compose.vps.yaml` liga o `farol-web` à rede do Caddy
+(container `indicadores-farol`), publicado em https://farol.173-212-242-68.sslip.io.
+
+O nginx só deixa passar `GET` em `/api/`. A consulta à Gold tem cache de 10 minutos e teto de 100 MB
+por consulta; o Airflow é lido com o token do modo "todos admin" (`GET /auth/token`), por dentro da
+rede Docker, sem expor a porta 8080.
+
 Testes: `cd farol/api && .venv/bin/pytest -q` · build do front: `cd farol/web && npm run build`.
 
 ## Andamento

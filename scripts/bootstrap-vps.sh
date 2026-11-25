@@ -13,7 +13,7 @@ command -v docker >/dev/null 2>&1 || erro "Docker não encontrado. Instale: http
 docker compose version >/dev/null 2>&1 || erro "Plugin 'docker compose' não encontrado."
 command -v openssl >/dev/null 2>&1 || erro "openssl não encontrado (usado para gerar senhas)."
 
-for pasta in data logs secrets backups; do
+for pasta in data logs secrets backups dbt-artefatos; do
   mkdir -p "$pasta"
 done
 chmod 700 secrets
@@ -22,7 +22,7 @@ chmod 700 secrets
 # usa o UID padrão da imagem (50000) e dá a ele as pastas que o container escreve/lê.
 if [[ "$(id -u)" -eq 0 ]]; then
   airflow_uid=50000
-  chown -R "${airflow_uid}:0" data logs
+  chown -R "${airflow_uid}:0" data logs dbt-artefatos
   chown "${airflow_uid}:0" secrets
   [[ -f secrets/sa.json ]] && chown "${airflow_uid}:0" secrets/sa.json
   # O container do dashboard (imagem evidencedev/serve) roda como uid 10001.
