@@ -91,3 +91,31 @@ jobs:
           python-version: "3.12"
       - run: pip install "dbt-core==1.12.6" "dbt-bigquery==1.9.2"
       - run: dbt parse --project-dir dbt --profiles-dir dbt
+
+  # CD: com tudo verde num push na main, atualiza a VPS. A chave de deploy só executa
+  # scripts/deploy-ci.sh (comando forçado no authorized_keys); o SHA vai como argumento.
+  deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [python, spark, farol-api, farol-web, shell, terraform, dbt]
+    runs-on: ubuntu-latest
+    environment:
+      name: producao
+      url: https://farol.173-212-242-68.sslip.io
+    concurrency:
+      group: deploy-vps
+      cancel-in-progress: false
+    steps:
+      - name: Chave de deploy
+        env:
+          CHAVE: ${{ secrets.DEPLOY_SSH_KEY }}
+          HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$CHAVE" > ~/.ssh/deploy && chmod 600 ~/.ssh/deploy
+          printf '%s\n' "$HOSTS" > ~/.ssh/known_hosts
+      - name: Deploy na VPS
+        env:
+          DESTINO: ${{ secrets.DEPLOY_HOST }}
+        run: ssh -i ~/.ssh/deploy -o BatchMode=yes -o StrictHostKeyChecking=yes "$DESTINO" "$GITHUB_SHA"
+      - name: Farol respondendo pela internet
+        run: curl -fsS --retry 10 --retry-delay 6 --retry-all-errors https://farol.173-212-242-68.sslip.io/api/saude

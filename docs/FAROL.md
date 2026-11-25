@@ -71,6 +71,18 @@ Testes: `cd farol/api && .venv/bin/pytest -q` · build do front: `cd farol/web &
 - [x] Visualização com gráficos próprios
 - [ ] Deploy na VPS
 
+## CI/CD
+
+Cada push na `main` roda o CI no GitHub Actions (testes do pipeline, do Spark e da API do Farol,
+build do front, shellcheck, Terraform e dbt). Com tudo verde, o job `deploy` atualiza a VPS:
+
+1. O runner se conecta por SSH com uma chave só de deploy, guardada nos *secrets* do repositório.
+2. Na VPS, essa chave tem `restrict` e `command=` no `authorized_keys`: não abre shell, só executa
+   `scripts/deploy-ci.sh`, que recebe o SHA do commit e o valida.
+3. O script busca a `main`, reconstrói as imagens, sobe os serviços e espera o Airflow e o Farol
+   responderem. Um lock impede dois deploys ao mesmo tempo.
+4. O workflow confirma que o Farol responde pela internet e registra o deploy no ambiente `producao`.
+
 ## Regras do projeto
 
 - Código escrito do zero. Nenhum arquivo, trecho, nome ou texto vem de projetos de trabalho.

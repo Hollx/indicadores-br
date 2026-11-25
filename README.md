@@ -24,7 +24,8 @@ API SGS do Banco Central + API Olinda (Boletim Focus), sem chave e sem custo
             gold.fct_expectativa_vs_realizado (o que o mercado esperava x o que aconteceu)
 
 Terraform: datasets bronze/silver/gold, service accounts e IAM mínimo
-GitHub Actions: lint e testes Python, shellcheck, terraform validate, dbt parse
+GitHub Actions: CI (lint, testes Python e do Farol, build do front, shellcheck, terraform validate, dbt parse)
+                e CD: com tudo verde num push na main, deploy automático na VPS (scripts/deploy-ci.sh)
 Shell: bootstrap da VPS, deploy, backup do banco do Airflow, healthcheck
 ```
 
