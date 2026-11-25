@@ -91,3 +91,18 @@ exposures:
       name: Hollx
     config:
       tags: ["visualizacao"]
+
+  - name: farol_indicadores
+    label: Farol, página Indicadores
+    type: application
+    maturity: medium
+    description: >
+      Página de visualização do Farol (farol/web), com gráficos próprios em React servidos pela API
+      FastAPI: Selic, IPCA, IGP-M, dólar e expectativa do mercado x realizado.
+    depends_on:
+      - ref('fct_indicadores_mensais')
+      - ref('fct_expectativa_vs_realizado')
+    owner:
+      name: Hollx
+    config:
+      tags: ["visualizacao", "farol"]

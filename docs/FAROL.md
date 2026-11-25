@@ -54,10 +54,10 @@ Testes: `cd farol/api && .venv/bin/pytest -q` · build do front: `cd farol/web &
 - [x] Governança no dbt (dono, camada, tags, colunas documentadas, exposure)
 - [x] API e telas de governança, catálogo e linhagem
 - [x] Fonte nova: expectativas de mercado (Boletim Focus)
-- [ ] Qualidade (testes, frescor e histórico)
-- [ ] Monitoramento (execuções do Airflow)
-- [ ] Painel de etapas
-- [ ] Visualização com gráficos próprios
+- [x] Qualidade (testes, frescor e histórico)
+- [x] Monitoramento (execuções do Airflow)
+- [x] Painel de etapas
+- [x] Visualização com gráficos próprios
 - [ ] Deploy na VPS
 
 ## Regras do projeto

@@ -153,7 +153,7 @@ def qualidade_frescor(leitor: LeitorArtefatos = Depends(obter_leitor)) -> dict:
     sources = _opcional(leitor, "sources.json")
     if sources is None:
         raise HTTPException(status_code=503, detail="sources.json ainda não existe")
-    return resumir_frescor(sources, _manifest(leitor))
+    return resumir_frescor(sources, _manifest(leitor), datetime.now(UTC))
 
 
 @app.get("/qualidade/historico")
@@ -212,7 +212,7 @@ def etapas(
     catalogo_atual = montar_catalogo(manifest)
     execucao_dbt = _ultima_execucao(leitor, historico)
     sources = _opcional(leitor, "sources.json")
-    frescor = resumir_frescor(sources, manifest) if sources else None
+    frescor = resumir_frescor(sources, manifest, datetime.now(UTC)) if sources else None
 
     ultima_run, tarefas, aviso_airflow = None, None, None
     try:

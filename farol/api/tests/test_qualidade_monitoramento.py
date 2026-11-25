@@ -69,6 +69,17 @@ def test_frescor(manifest):
     assert fonte["nome"] == "bronze.sgs_observacoes"
     assert fonte["situacao"] == "ok"
     assert fonte["aviso_apos"] == {"count": 26, "period": "hour"}
+    assert fonte["horas_desde_ultimo_dado"] is None
+    from datetime import UTC, datetime
+
+    agora = datetime(2026, 11, 6, 18, 55, 30, tzinfo=UTC)
+    depois = resumir_frescor(_ler("sources.json"), manifest, agora)["fontes"][0]
+    assert depois["horas_desde_ultimo_dado"] == 24.0
+    assert depois["situacao"] == "ok"
+    muito_depois = datetime(2026, 11, 8, 18, 55, 30, tzinfo=UTC)  # 72 h: passou do erro (50 h)
+    parado = resumir_frescor(_ler("sources.json"), manifest, muito_depois)["fontes"][0]
+    assert parado["situacao"] == "falha"
+    assert parado["situacao_na_verificacao"] == "ok"
 
 
 def test_historico_registra_uma_vez(tmp_path, run_results, manifest):
@@ -173,6 +184,7 @@ def test_etapas_juntam_airflow_e_dbt(run_results, manifest):
     etapas = {e["id"]: e for e in montar_etapas(tarefas, execucao, frescor, catalogo)}
     assert list(etapas) == ["extracao", "bronze", "frescor", "silver", "gold", "visualizacao"]
     assert etapas["extracao"]["situacao"] == "falha"
+    assert "extrair: 1/2 ok, 1 falha" in etapas["extracao"]["detalhes"]
     assert etapas["bronze"]["situacao"] == "ok"
     assert etapas["silver"]["situacao"] == "ok"
     assert etapas["gold"]["situacao"] == "ok"

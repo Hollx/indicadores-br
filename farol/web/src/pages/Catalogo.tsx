@@ -126,7 +126,10 @@ export default function Catalogo() {
         <ul className="lista">
           {filtrados.map((r) => (
             <li key={r.id}>
-              <button className={atual?.id === r.id ? "ativo" : undefined} onClick={() => setSelecionado(r.id)}>
+              <button
+                className={atual?.id === r.id ? "ativo" : undefined}
+                onClick={() => setSelecionado(r.id)}
+              >
                 <span className={`ponto camada-${r.camada}`} aria-hidden />
                 <span className="lista-nome">{r.nome}</span>
                 <span className="lista-tipo">{ROTULO_TIPO[r.tipo]}</span>

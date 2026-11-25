@@ -95,23 +95,64 @@ def _para_datetime(texto: str | None) -> datetime | None:
     return datetime.fromisoformat(texto.replace("Z", "+00:00"))
 
 
-def resumir_frescor(sources: dict[str, Any], manifest: dict[str, Any]) -> dict[str, Any]:
-    """Frescor de cada fonte: quando chegou o último dado e se está dentro do combinado."""
+SEGUNDOS_POR_PERIODO = {"minute": 60, "hour": 3600, "day": 86400}
+
+
+def _limite_horas(criterio: dict[str, Any] | None) -> float | None:
+    if (
+        not criterio
+        or not criterio.get("count")
+        or criterio.get("period") not in SEGUNDOS_POR_PERIODO
+    ):
+        return None
+    return criterio["count"] * SEGUNDOS_POR_PERIODO[criterio["period"]] / 3600
+
+
+def situacao_atual(horas: float | None, aviso: dict | None, erro: dict | None) -> str | None:
+    """Reavalia o frescor com a hora de agora: dado parado vira aviso/falha mesmo se o dbt
+    disse 'pass' quando verificou (a verificação pode ter sido há dias)."""
+    if horas is None:
+        return None
+    limite_erro, limite_aviso = _limite_horas(erro), _limite_horas(aviso)
+    if limite_erro is not None and horas > limite_erro:
+        return "falha"
+    if limite_aviso is not None and horas > limite_aviso:
+        return "aviso"
+    return "ok"
+
+
+def resumir_frescor(
+    sources: dict[str, Any], manifest: dict[str, Any], agora: datetime | None = None
+) -> dict[str, Any]:
+    """Frescor de cada fonte: quando chegou o último dado e se está dentro do combinado.
+
+    `atraso_horas` é o atraso medido pelo dbt na verificação; `horas_desde_ultimo_dado` é o
+    atraso agora (quando `agora` é informado), que é o que interessa para monitorar.
+    """
     fontes = []
     for resultado in sources.get("results", []):
         uid = resultado["unique_id"]
         no = manifest.get("sources", {}).get(uid, {})
         criterio = resultado.get("criteria") or {}
         atraso_s = resultado.get("max_loaded_at_time_ago_in_s")
+        horas_agora = horas_desde(resultado.get("max_loaded_at"), agora) if agora else None
+        situacao_dbt = classificar(resultado.get("status"))
+        agora_sit = situacao_atual(
+            horas_agora, criterio.get("warn_after"), criterio.get("error_after")
+        )
+        ordem = ["falha", "aviso", "ok", "ignorado"]
+        situacao = min([situacao_dbt, agora_sit or situacao_dbt], key=ordem.index)
         fontes.append(
             {
                 "id": uid,
                 "nome": f"{no.get('source_name', '?')}.{no.get('name', uid.split('.')[-1])}",
                 "status": resultado.get("status"),
-                "situacao": classificar(resultado.get("status")),
+                "situacao": situacao,
+                "situacao_na_verificacao": situacao_dbt,
                 "ultimo_dado_em": resultado.get("max_loaded_at"),
                 "verificado_em": resultado.get("snapshotted_at"),
                 "atraso_horas": round(atraso_s / 3600, 1) if atraso_s is not None else None,
+                "horas_desde_ultimo_dado": horas_agora,
                 "aviso_apos": criterio.get("warn_after"),
                 "erro_apos": criterio.get("error_after"),
             }

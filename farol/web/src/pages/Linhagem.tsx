@@ -95,9 +95,7 @@ export default function Linhagem() {
   return (
     <section>
       <h1>Linhagem</h1>
-      <p className="subtitulo">
-        Do dado bruto ao dashboard: cada seta é uma dependência declarada no dbt.
-      </p>
+      <p className="subtitulo">Do dado bruto ao dashboard: cada seta é uma dependência declarada no dbt.</p>
       <div className="grafo">
         <ReactFlow nodes={grafo.nos} edges={grafo.arestas} fitView nodesConnectable={false}>
           <Background gap={20} />

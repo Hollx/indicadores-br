@@ -1,15 +1,6 @@
 import { useApi } from "../api";
+import { Cartao } from "../componentes";
 import type { Resumo } from "../tipos";
-
-function Cartao({ rotulo, valor, detalhe }: { rotulo: string; valor: string; detalhe?: string }) {
-  return (
-    <div className="cartao">
-      <span className="cartao-rotulo">{rotulo}</span>
-      <span className="cartao-valor">{valor}</span>
-      {detalhe && <span className="cartao-detalhe">{detalhe}</span>}
-    </div>
-  );
-}
 
 function Barra({ pct }: { pct: number | null }) {
   const valor = pct ?? 0;
@@ -31,14 +22,26 @@ export default function Governanca() {
     <section>
       <h1>Governança</h1>
       <p className="subtitulo">
-        Quanto do pipeline está documentado, tem dono e é coberto por testes. Lido do manifest do dbt
-        a cada execução.
+        Quanto do pipeline está documentado, tem dono e é coberto por testes. Lido do manifest do dbt a cada
+        execução.
       </p>
       <div className="cartoes">
-        <Cartao rotulo="Tabelas e fontes" valor={String(dados.recursos)} detalhe={`${dados.exposicoes} exposição`} />
+        <Cartao
+          rotulo="Tabelas e fontes"
+          valor={String(dados.recursos)}
+          detalhe={`${dados.exposicoes} exposição`}
+        />
         <Cartao rotulo="Com dono" valor={`${dados.com_dono}/${dados.recursos}`} />
-        <Cartao rotulo="Testes de qualidade" valor={String(dados.testes)} detalhe={`${dados.com_testes} tabelas cobertas`} />
-        <Cartao rotulo="Colunas documentadas" valor={fmt(dados.pct_colunas_documentadas)} detalhe={`de ${dados.colunas} colunas`} />
+        <Cartao
+          rotulo="Testes de qualidade"
+          valor={String(dados.testes)}
+          detalhe={`${dados.com_testes} tabelas cobertas`}
+        />
+        <Cartao
+          rotulo="Colunas documentadas"
+          valor={fmt(dados.pct_colunas_documentadas)}
+          detalhe={`de ${dados.colunas} colunas`}
+        />
         <Cartao rotulo="Colunas com teste" valor={fmt(dados.pct_colunas_testadas)} />
       </div>
 

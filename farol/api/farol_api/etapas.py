@@ -10,6 +10,29 @@ from typing import Any
 
 ORDEM_GRAVIDADE = ["falha", "aviso", "rodando", "sem_dados", "ok", "ignorado"]
 
+ESTADO_PT = {
+    "success": "ok",
+    "failed": "falha",
+    "upstream_failed": "falha anterior",
+    "up_for_retry": "aguardando nova tentativa",
+    "running": "rodando",
+    "queued": "na fila",
+    "scheduled": "agendada",
+    "skipped": "pulada",
+}
+
+
+def _resumo_tarefa(tarefa: dict[str, Any]) -> str:
+    """'extrair: 4/4 ok' ou 'extrair_focus: 1/2 ok, 1 falha'."""
+    estados = tarefa["estados"]
+    ok = estados.get("success", 0)
+    outros = [f"{n} {ESTADO_PT.get(e, e)}" for e, n in estados.items() if e != "success"]
+    texto = f"{tarefa['tarefa']}: {ok}/{tarefa['instancias']} ok"
+    if tarefa.get("tentativas", 0) > 1:
+        outros.append(f"até {tarefa['tentativas']} tentativas")
+    return f"{texto}, {', '.join(outros)}" if outros else texto
+
+
 ETAPAS = [
     {
         "id": "extracao",
@@ -80,15 +103,13 @@ def montar_etapas(
             tarefa = tarefas_por_id.get(tarefa_id)
             if tarefa:
                 situacoes.append(tarefa["situacao"])
-                detalhes.append(
-                    f"{tarefa_id}: {tarefa['instancias']} execução(ões), "
-                    f"{', '.join(f'{n} {e}' for e, n in tarefa['estados'].items())}"
-                )
+                detalhes.append(_resumo_tarefa(tarefa))
 
         if definicao["id"] == "frescor" and frescor:
             for fonte in frescor["fontes"]:
                 situacoes.append(fonte["situacao"])
-                detalhes.append(f"{fonte['nome']}: último dado há {fonte['atraso_horas']} h")
+                horas = fonte.get("horas_desde_ultimo_dado") or fonte["atraso_horas"]
+                detalhes.append(f"{fonte['nome']}: último dado há {horas} h")
 
         if definicao.get("camada") and execucao_dbt:
             nos = [
@@ -99,9 +120,9 @@ def montar_etapas(
             situacoes.extend(n["situacao"] for n in nos)
             if nos:
                 falhas = [n["nome"] for n in testes if n["situacao"] in ("falha", "aviso")]
+                tabelas = "tabela construída" if len(modelos) == 1 else "tabelas construídas"
                 detalhes.append(
-                    f"{len(modelos)} tabela(s) construída(s), "
-                    f"{len(testes) - len(falhas)}/{len(testes)} testes ok"
+                    f"{len(modelos)} {tabelas}, {len(testes) - len(falhas)}/{len(testes)} testes ok"
                 )
                 detalhes.extend(f"teste com problema: {nome}" for nome in falhas)
 
