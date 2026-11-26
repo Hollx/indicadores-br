@@ -100,7 +100,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: producao
-      url: https://farol.173-212-242-68.sslip.io
+      url: https://diegoobara.com.br
     concurrency:
       group: deploy-vps
       cancel-in-progress: false
@@ -118,4 +118,4 @@ jobs:
           DESTINO: ${{ secrets.DEPLOY_HOST }}
         run: ssh -i ~/.ssh/deploy -o BatchMode=yes -o StrictHostKeyChecking=yes "$DESTINO" "$GITHUB_SHA"
       - name: Farol respondendo pela internet
-        run: curl -fsS --retry 10 --retry-delay 6 --retry-all-errors https://farol.173-212-242-68.sslip.io/api/saude
+        run: curl -fsS --retry 10 --retry-delay 6 --retry-all-errors https://diegoobara.com.br/api/saude

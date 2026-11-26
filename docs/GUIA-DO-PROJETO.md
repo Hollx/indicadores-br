@@ -27,7 +27,7 @@ Todo dia o pipeline:
 O objetivo é praticar e demonstrar, num repositório público, a stack moderna de engenharia de dados: orquestração, transformação, qualidade de dados, infraestrutura como código, CI e visualização.
 
 - **Repositório:** https://github.com/Hollx/indicadores-br
-- **Farol (monitoramento, governança, qualidade e visualização):** https://farol.173-212-242-68.sslip.io
+- **Farol (monitoramento, governança, qualidade e visualização):** https://diegoobara.com.br
   (o endereço antigo do dashboard, `indicadores.173-212-242-68.sslip.io`, redireciona para cá)
 
 ---
